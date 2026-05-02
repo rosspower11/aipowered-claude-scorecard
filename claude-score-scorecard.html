@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Your Claude Score? — AI Powered × Claude</title>
+<meta name="description" content="Find out where you sit on the 6 levels of Claude. 12 questions. 5 minutes. Your personal ClaudeOS roadmap.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* =====================================================================
+   CONFIG: edit these two URLs to wire up the form submission
+   ===================================================================== */
+/* Webhook URLs are set on the <body data-*> attributes — see body tag */
+
+/* TOKENS */
+:root {
+  --bg: #000000;
+  --bg-elevated: #0F0F11;
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #FFFFFF;
+  --text-secondary: #A0A0A8;
+  --text-muted: #6B6B72;
+  --accent: #B8C5D6;
+  --accent-soft: #8A99AD;
+  --green: #4ADE80;
+  --display: 'Archivo', 'Inter', -apple-system, sans-serif;
+  --body: 'Inter', -apple-system, sans-serif;
+  --max-width: 1280px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+body { min-height: 100vh; line-height: 1.5; overflow-x: hidden; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input { font-family: inherit; }
+
+/* TYPE */
+.kicker {
+  font-family: var(--body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.display {
+  font-family: var(--display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.96;
+  text-transform: uppercase;
+}
+.display-xl { font-size: clamp(48px, 8vw, 96px); }
+.display-lg { font-size: clamp(36px, 5.5vw, 64px); }
+.display-md { font-size: clamp(28px, 4vw, 44px); }
+.display-soft { color: var(--accent); font-weight: 700; text-transform: none; letter-spacing: -0.015em; }
+
+.body-lg { font-size: 18px; color: var(--text-secondary); line-height: 1.55; }
+.body-md { font-size: 16px; color: var(--text-secondary); line-height: 1.6; }
+.body-sm { font-size: 14px; color: var(--text-secondary); }
+
+/* HEADER */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 32px;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.7);
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-size: 14px; font-weight: 500; letter-spacing: 0.04em; }
+.logo span { color: var(--text-muted); margin: 0 6px; }
+.header-meta { font-size: 12px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* LAYOUT */
+main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
+.screen { display: none; animation: fadeIn 0.4s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* PILL BADGE */
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 100px;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(74, 222, 128, 0.6); }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 18px 32px;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.btn-primary { background: #FFFFFF; color: #000000; }
+.btn-primary:hover { transform: translateY(-1px); background: #F0F0F0; }
+.btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+.btn-secondary:hover { background: var(--surface-hover); border-color: var(--text); }
+.btn-arrow { transition: transform 0.2s ease; }
+.btn:hover .btn-arrow { transform: translateX(3px); }
+
+/* ============== WELCOME SCREEN ============== */
+.welcome { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; min-height: calc(100vh - 200px); }
+@media (min-width: 1100px) {
+  .welcome { grid-template-columns: 1.05fr 0.95fr; gap: 72px; }
+}
+.welcome-left .pill { margin-bottom: 28px; }
+.welcome-headline { margin-bottom: 24px; }
+.welcome-headline .welcome-title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(40px, 5.5vw, 68px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.welcome-headline .welcome-sub-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--accent);
+}
+.welcome-sub { font-size: 17px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 36px; max-width: 540px; }
+.welcome-form { display: flex; flex-direction: column; gap: 14px; max-width: 520px; }
+.welcome-form input {
+  width: 100%;
+  padding: 22px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.welcome-form input:focus { border-color: var(--text); background: var(--surface-hover); }
+.welcome-form input::placeholder { color: var(--text-muted); }
+.welcome-form .btn { width: 100%; padding: 22px; }
+.welcome-meta { display: flex; flex-direction: column; gap: 16px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); max-width: 520px; }
+.welcome-meta-row { display: flex; align-items: baseline; gap: 24px; }
+.welcome-meta-row .kicker { min-width: 92px; }
+.welcome-meta-row .value { font-size: 16px; font-weight: 600; color: var(--text); }
+.welcome-error { color: #FF6B6B; font-size: 13px; margin-top: 8px; min-height: 16px; }
+
+.welcome-right {
+  position: relative;
+  background: linear-gradient(135deg, #1A1F2E 0%, #0A0D14 100%);
+  border: 1px solid var(--border);
+  padding: 32px;
+  min-height: auto;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
+  overflow: hidden;
+}
+@media (min-width: 1100px) {
+  .welcome-right { padding: 48px; min-height: 480px; }
+}
+.welcome-right::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(184, 197, 214, 0.08), transparent 50%);
+  pointer-events: none;
+}
+.levels-stack { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.level-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 13px;
+}
+.level-row:nth-child(1) { background: rgba(184, 197, 214, 0.04); }
+.level-row:nth-child(2) { background: rgba(184, 197, 214, 0.06); }
+.level-row:nth-child(3) { background: rgba(184, 197, 214, 0.08); }
+.level-row:nth-child(4) { background: rgba(184, 197, 214, 0.10); }
+.level-row:nth-child(5) { background: rgba(184, 197, 214, 0.13); }
+.level-row:nth-child(6) { background: rgba(184, 197, 214, 0.18); border-color: rgba(184, 197, 214, 0.25); }
+.level-row .num { color: var(--text-muted); font-weight: 500; min-width: 24px; }
+.level-row .name { font-weight: 700; color: var(--text); flex: 1; padding-left: 16px; font-family: var(--body); letter-spacing: 0.02em; }
+.level-row .week { color: var(--text-muted); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+.welcome-right-caption { position: relative; z-index: 1; padding-top: 32px; border-top: 1px solid var(--border); margin-top: 24px; }
+.welcome-right-caption .kicker { color: var(--accent-soft); margin-bottom: 8px; }
+.welcome-right-caption p { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+
+/* ============== QUIZ SCREEN ============== */
+.quiz { max-width: 760px; margin: 0 auto; }
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.quiz-progress { display: flex; align-items: center; gap: 16px; }
+.quiz-counter { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary); }
+.quiz-bar { flex: 1; max-width: 300px; height: 4px; background: var(--surface); position: relative; overflow: hidden; }
+.quiz-bar-fill { position: absolute; inset: 0; background: var(--text); width: 0%; transition: width 0.4s ease; }
+.quiz-back { font-size: 13px; color: var(--text-muted); padding: 8px 0; transition: color 0.15s ease; }
+.quiz-back:hover { color: var(--text); }
+.quiz-back:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.quiz-level-tag { font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 24px; }
+.quiz-question {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin-bottom: 40px;
+  max-width: 720px;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 12px; }
+.quiz-option {
+  display: flex; align-items: flex-start; gap: 18px;
+  padding: 22px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: left;
+  font-size: 16px; line-height: 1.5; color: var(--text);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  width: 100%;
+}
+.quiz-option:hover { border-color: var(--border-strong); background: var(--surface-hover); }
+.quiz-option:active { transform: scale(0.99); }
+.quiz-option.selected { border-color: var(--text); background: var(--surface-hover); }
+.quiz-option-letter {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  margin-top: 1px;
+}
+.quiz-option.selected .quiz-option-letter { background: var(--text); color: #000; border-color: var(--text); }
+
+/* ============== LOADING SCREEN ============== */
+.loading {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100vh - 200px); gap: 32px;
+}
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 2px solid var(--border);
+  border-top-color: var(--text);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-family: var(--display); font-weight: 700; font-size: 24px; letter-spacing: -0.01em; }
+.loading-sub { color: var(--text-muted); font-size: 14px; letter-spacing: 0.05em; }
+
+/* ============== RESULTS SCREEN ============== */
+.results-hero {
+  display: grid; grid-template-columns: 1fr; gap: 48px;
+  align-items: center;
+  padding: 40px 0 80px;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 960px) { .results-hero { grid-template-columns: 1.1fr 0.9fr; gap: 80px; } }
+.results-hero .pill { margin-bottom: 28px; }
+.score-display {
+  display: flex; align-items: baseline; gap: 12px;
+  font-family: var(--display);
+  margin-bottom: 8px;
+}
+.score-number {
+  font-size: clamp(120px, 18vw, 200px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+  background: linear-gradient(180deg, #FFFFFF 0%, #B8C5D6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.score-total { font-size: clamp(32px, 5vw, 56px); font-weight: 600; color: var(--text-muted); letter-spacing: -0.02em; }
+.score-band { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 24px; }
+.score-narrative { font-size: 18px; color: var(--text-secondary); line-height: 1.6; max-width: 540px; }
+
+.radar-wrap { background: var(--surface); border: 1px solid var(--border); padding: 32px; aspect-ratio: 1; max-width: 520px; margin: 0 auto; }
+.radar-wrap canvas { max-width: 100%; }
+
+.results-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+.results-section-header { margin-bottom: 48px; }
+.results-section-header .kicker { margin-bottom: 16px; }
+
+.level-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 720px) { .level-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1080px) { .level-grid { grid-template-columns: repeat(3, 1fr); } }
+.level-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 32px;
+  display: flex; flex-direction: column; gap: 20px;
+  transition: border-color 0.2s ease;
+}
+.level-card:hover { border-color: var(--border-strong); }
+.level-card-top { display: flex; justify-content: space-between; align-items: baseline; }
+.level-card-num { font-family: var(--display); font-size: 28px; font-weight: 900; color: var(--text-muted); letter-spacing: -0.02em; }
+.level-card-score { font-family: var(--display); font-size: 32px; font-weight: 900; letter-spacing: -0.02em; }
+.level-card-name { font-family: var(--display); font-size: 26px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
+.level-card-band { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.level-card-bar { height: 4px; background: var(--surface); position: relative; overflow: hidden; }
+.level-card-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--text); transition: width 0.8s ease; }
+.level-card-band-beginner ~ .level-card-bar .level-card-bar-fill,
+.level-card[data-band="beginner"] .level-card-bar-fill { background: #FF8C8C; }
+.level-card[data-band="explorer"] .level-card-bar-fill { background: #FFC078; }
+.level-card[data-band="practitioner"] .level-card-bar-fill { background: #B8C5D6; }
+.level-card[data-band="operator"] .level-card-bar-fill { background: var(--green); }
+.level-card-copy { font-size: 15px; color: var(--text-secondary); line-height: 1.55; }
+
+/* CTA SECTION */
+.cta-section { padding: 80px 0; }
+.cta-headline { margin-bottom: 16px; max-width: 800px; }
+.cta-sub { font-size: 18px; color: var(--text-secondary); max-width: 640px; margin-bottom: 48px; line-height: 1.55; }
+.cta-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 720px) { .cta-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
+.cta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 40px;
+  display: flex; flex-direction: column; gap: 20px;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+  text-decoration: none; color: inherit;
+}
+.cta-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.cta-card.primary { background: #FFFFFF; color: #000; border-color: #FFFFFF; }
+.cta-card.primary:hover { background: #F0F0F0; border-color: #F0F0F0; }
+.cta-card-kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.6; }
+.cta-card-title { font-family: var(--display); font-size: 28px; font-weight: 800; letter-spacing: -0.01em; }
+.cta-card-desc { font-size: 15px; line-height: 1.55; opacity: 0.75; flex: 1; }
+.cta-card-arrow { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+
+/* FOOTER */
+.footer-meta { padding: 32px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.footer-meta .body-sm { color: var(--text-muted); }
+
+@media (max-width: 720px) {
+  main { padding: 100px 20px 60px; }
+  .header { padding: 18px 20px; }
+  .results-hero { padding: 24px 0 60px; }
+  .level-card { padding: 24px; }
+  .cta-card { padding: 28px; }
+}
+</style>
+</head>
+
+<body
+  data-ghl-webhook=""
+  data-airtable-webhook=""
+  data-checkout-url="https://checkout.aipowered.xyz/"
+  data-call-url="https://claude.aipowered.xyz/"
+>
+
+<header class="header">
+  <div class="logo">ai powered <span>×</span> Claude</div>
+  <div class="header-meta" id="headerMeta">The Claude Score</div>
+</header>
+
+<!-- ======================== WELCOME SCREEN ======================== -->
+<main class="screen active" id="screen-welcome">
+  <div class="welcome">
+    <div class="welcome-left">
+      <div class="pill"><span class="pill-dot"></span>The ClaudeOS Game</div>
+      <div class="welcome-headline">
+        <div class="welcome-title">What's your<br>Claude score?</div>
+        <div class="welcome-sub-title">Find out where you sit on the 6 levels.</div>
+      </div>
+      <p class="welcome-sub">12 questions. 5 minutes. Get a personal report on how you're using Claude today, and the levels you haven't unlocked yet.</p>
+      <form class="welcome-form" id="welcomeForm">
+        <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email" required>
+        <button type="submit" class="btn btn-primary">Get my score <span class="btn-arrow">→</span></button>
+        <div class="welcome-error" id="welcomeError"></div>
+      </form>
+      <div class="welcome-meta">
+        <div class="welcome-meta-row"><span class="kicker">Time</span><span class="value">5 minutes</span></div>
+        <div class="welcome-meta-row"><span class="kicker">Format</span><span class="value">12 questions, multi-choice</span></div>
+        <div class="welcome-meta-row"><span class="kicker">Output</span><span class="value">Your level, your score, your roadmap</span></div>
+      </div>
+    </div>
+    <div class="welcome-right">
+      <div class="levels-stack">
+        <div class="level-row"><span class="num">01</span><span class="name">Chat</span><span class="week">Level 1</span></div>
+        <div class="level-row"><span class="num">02</span><span class="name">Customise</span><span class="week">Level 2</span></div>
+        <div class="level-row"><span class="num">03</span><span class="name">Create</span><span class="week">Level 3</span></div>
+        <div class="level-row"><span class="num">04</span><span class="name">Connect</span><span class="week">Level 4</span></div>
+        <div class="level-row"><span class="num">05</span><span class="name">Code</span><span class="week">Level 5</span></div>
+        <div class="level-row"><span class="num">06</span><span class="name">Command</span><span class="week">Level 6</span></div>
+      </div>
+      <div class="welcome-right-caption">
+        <div class="kicker">The 6 levels of Claude</div>
+        <p>Each level builds on the last. By the top, you're running a personal operating system that does the work while you sleep.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ======================== QUIZ SCREEN ======================== -->
+<main class="screen" id="screen-quiz">
+  <div class="quiz">
+    <div class="quiz-header">
+      <div class="quiz-progress">
+        <div class="quiz-counter" id="quizCounter">Question 1 of 12</div>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBar"></div></div>
+      </div>
+      <button class="quiz-back" id="quizBack">← Back</button>
+    </div>
+    <div id="quizContent"></div>
+  </div>
+</main>
+
+<!-- ======================== LOADING SCREEN ======================== -->
+<main class="screen" id="screen-loading">
+  <div class="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Calculating your Claude score</div>
+    <div class="loading-sub">Mapping your answers across the 6 levels</div>
+  </div>
+</main>
+
+<!-- ======================== RESULTS SCREEN ======================== -->
+<main class="screen" id="screen-results">
+  <section class="results-hero">
+    <div>
+      <div class="pill"><span class="pill-dot"></span>Your Claude Score</div>
+      <div class="score-display">
+        <span class="score-number" id="scoreNumber">0</span>
+        <span class="score-total">/100</span>
+      </div>
+      <div class="score-band" id="scoreBand">CASUAL USER</div>
+      <p class="score-narrative" id="scoreNarrative"></p>
+    </div>
+    <div class="radar-wrap">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </section>
+
+  <section class="results-section">
+    <div class="results-section-header">
+      <div class="kicker">The breakdown</div>
+      <div class="display display-lg">Where you stand on each level.</div>
+    </div>
+    <div class="level-grid" id="levelGrid"></div>
+  </section>
+
+  <section class="cta-section">
+    <div class="kicker" style="margin-bottom: 16px;">What's next</div>
+    <div class="display display-lg cta-headline" id="ctaHeadline">Close the gap to ClaudeOS Operator.</div>
+    <p class="cta-sub" id="ctaSub">The Claude Accelerator is the 6-week build that takes you from where you are now to a personal OS that runs itself.</p>
+    <div class="cta-grid" id="ctaGrid">
+      <!-- Filled by JS based on score band -->
+    </div>
+  </section>
+
+  <div class="footer-meta">
+    <div class="body-sm">Score for <span id="footerEmail">you</span></div>
+    <div class="body-sm">AI Powered × Claude · Built by Ross Power</div>
+  </div>
+</main>
+
+<script>
+/* =========================================================================
+   QUESTION DATA — 12 questions, 2 per level, options scored 1/3/5/8
+   ========================================================================= */
+const LEVELS = [
+  { id: 'chat',      name: 'Chat',      num: '01' },
+  { id: 'customise', name: 'Customise', num: '02' },
+  { id: 'create',    name: 'Create',    num: '03' },
+  { id: 'connect',   name: 'Connect',   num: '04' },
+  { id: 'code',      name: 'Code',      num: '05' },
+  { id: 'command',   name: 'Command',   num: '06' },
+];
+
+const QUESTIONS = [
+  // CHAT
+  { level: 'chat', text: "When you open Claude, you typically...", options: [
+    { label: "Type a quick question the way you would in Google or ChatGPT", score: 1 },
+    { label: "Write a sentence or two with a bit of context", score: 3 },
+    { label: "Use a structured prompt with role, context, and the output you want", score: 5 },
+    { label: "Have reusable prompt templates and Projects with memory set up around how I work", score: 8 },
+  ]},
+  { level: 'chat', text: "How are you using Claude Projects and Memory?", options: [
+    { label: "I haven't set up Projects or used Memory features", score: 1 },
+    { label: "I have one or two Projects with some files in them", score: 3 },
+    { label: "Several Projects organised by area of work, with knowledge loaded in", score: 5 },
+    { label: "Projects, Memory, and custom instructions all configured around how I actually work", score: 8 },
+  ]},
+  // CUSTOMISE
+  { level: 'customise', text: "How are you using Claude Skills right now?", options: [
+    { label: "I'm not sure what Skills are", score: 1 },
+    { label: "I've used a few of the stock Skills", score: 3 },
+    { label: "I tweak stock Skills to match my workflow", score: 5 },
+    { label: "I've built my own Skills that encode my expertise, voice, and processes", score: 8 },
+  ]},
+  { level: 'customise', text: "When Claude writes for you, does it sound like you?", options: [
+    { label: "Pretty obvious it's AI. Generic and stiff", score: 1 },
+    { label: "Sometimes, depending on what I ask", score: 3 },
+    { label: "After I edit it, yes", score: 5 },
+    { label: "Yes. My voice and standards are encoded in a Skill so it's consistent every time", score: 8 },
+  ]},
+  // CREATE
+  { level: 'create', text: "The last time you needed a polished doc, deck, or social asset, you...", options: [
+    { label: "Built it manually in Docs, Canva, or PowerPoint", score: 1 },
+    { label: "Got Claude to draft text, then formatted it yourself", score: 3 },
+    { label: "Had Claude build the artifact in one go and edited from there", score: 5 },
+    { label: "Used a Skill that produces branded, ready-to-ship artifacts on demand", score: 8 },
+  ]},
+  { level: 'create', text: "How long does it take you to ship a polished deliverable (deck, doc, social post)?", options: [
+    { label: "Hours to days. Often a weekend", score: 1 },
+    { label: "A few hours, with several rounds of editing", score: 3 },
+    { label: "Under an hour for most things", score: 5 },
+    { label: "Minutes. Claude produces it, I review and ship", score: 8 },
+  ]},
+  // CONNECT
+  { level: 'connect', text: "How is Claude connected to your other tools (Gmail, Drive, Notion, Slack, Calendar)?", options: [
+    { label: "It isn't. I copy and paste between Claude and other apps", score: 1 },
+    { label: "One or two basic integrations are set up", score: 3 },
+    { label: "Multiple connectors or MCPs running so Claude can read across my stack", score: 5 },
+    { label: "Claude is the hub. Context flows in from every tool, actions flow back out", score: 8 },
+  ]},
+  { level: 'connect', text: "When something happens in another tool (a new email, a calendar event, a file in Drive), can Claude react?", options: [
+    { label: "No. Claude doesn't know about it", score: 1 },
+    { label: "Only if I tell Claude what happened", score: 3 },
+    { label: "Yes, for some workflows I've set up", score: 5 },
+    { label: "Yes. Claude is wired with triggers that fire automatically", score: 8 },
+  ]},
+  // CODE
+  { level: 'code', text: "When you have an idea for a tool, dashboard, or app, you...", options: [
+    { label: "Write it down and hope to find a developer one day", score: 1 },
+    { label: "Try to build a version in a no-code tool", score: 3 },
+    { label: "Use Claude to generate code I can deploy somewhere", score: 5 },
+    { label: "Ship working software with Claude Code, deployed to a live URL", score: 8 },
+  ]},
+  { level: 'code', text: "The last thing you 'built' with Claude was...", options: [
+    { label: "A document or a deck", score: 1 },
+    { label: "An automation in a no-code tool", score: 3 },
+    { label: "A working script or a basic web page", score: 5 },
+    { label: "A full app, dashboard, or internal tool deployed live", score: 8 },
+  ]},
+  // COMMAND
+  { level: 'command', text: "How much of your recurring work (follow-ups, research, reporting, content) runs without you?", options: [
+    { label: "None. I do everything manually", score: 1 },
+    { label: "A few small automations", score: 3 },
+    { label: "Several scheduled Claude tasks running on a cadence", score: 5 },
+    { label: "A stack of agents handling the bulk of recurring work. Things ship while I sleep", score: 8 },
+  ]},
+  { level: 'command', text: "How is your Claude environment organised: data, plugins, Skills, projects?", options: [
+    { label: "Scattered, or not really set up", score: 1 },
+    { label: "Some folders and projects, but nothing systematic", score: 3 },
+    { label: "Organised projects with Skills set up for the work I repeat", score: 5 },
+    { label: "A full personal OS. Second brain, plugins, Skills, and agents all working together", score: 8 },
+  ]},
+];
+
+/* =========================================================================
+   COMMENTARY COPY — 4 bands per level (24 blocks) + 4 overall narratives
+   ========================================================================= */
+const LEVEL_COPY = {
+  chat: {
+    beginner:     "You're typing like it's Google. Claude can do far more than answer your questions, but only if you direct it. Level 1 is about turning every conversation into work that ships.",
+    explorer:     "You've started writing better prompts. The next jump is structure. Role, context, output. That's what turns Claude from a search engine into a thinking partner.",
+    practitioner: "Your prompting is solid. The leverage now sits in Projects and Memory. Build the environment around how you actually work, and Claude stops needing to be re-explained.",
+    operator:     "You direct Claude. Every conversation moves work forward. The next levels are about turning that skill into a system."
+  },
+  customise: {
+    beginner:     "Skills make Claude work to your standard, every time, without being told twice. Without them, you're rebuilding your taste from scratch every conversation.",
+    explorer:     "You've used stock Skills. The compound starts when you build your own. Voice, expertise, and process encoded once and used forever.",
+    practitioner: "You're customising Skills. The next move is your voice and standards encoded so cleanly that Claude sounds like you on your best day.",
+    operator:     "Your Skill library is your unfair advantage. Claude works to your standard every time. Now wire it into the rest of your work."
+  },
+  create: {
+    beginner:     "You're still building artifacts manually. A deck that takes a weekend should take an afternoon. That's what this level fixes.",
+    explorer:     "Claude drafts text but you finish in another tool. The leverage sits in producing the artifact directly. Branded, structured, ready to ship.",
+    practitioner: "You're shipping fast. The Operator move is reusable templates and Skills that generate branded artifacts on demand. No more starting from blank.",
+    operator:     "You ship in minutes what used to take a weekend. Now connect the artifacts you create to the tools you ship them in."
+  },
+  connect: {
+    beginner:     "Claude is on its own island. Every other tool is too. You're paying the cost of context-switching every time you work.",
+    explorer:     "A few connectors are running. Now wire the rest. Email, calendar, drive, notes. Context flows in, actions flow out.",
+    practitioner: "Claude reads across your stack. The next move is automatic triggers. Things happen in your tools, Claude reacts without you asking.",
+    operator:     "Claude is the hub of your workflow. Every tool feeds it, every action runs through it. Zero time lost to context-switching."
+  },
+  code: {
+    beginner:     "You have ideas that never get built because you're not a developer. Claude Code is how that changes. Apps, dashboards, internal tools, shipped in hours.",
+    explorer:     "No-code is the training wheels. The unlock is Claude Code. Real software, real URLs, no engineering team needed.",
+    practitioner: "You're shipping working code. The Operator move is the full deployment loop. Idea to live URL in a single afternoon.",
+    operator:     "You've collapsed the gap between idea and shipped product. The next level wires this into a system that runs without you."
+  },
+  command: {
+    beginner:     "Everything you do, you do manually. Recurring work eats your week. Level 6 is when work starts running while you sleep.",
+    explorer:     "A few automations exist. The full move is a stack of agents on schedules and triggers, with a second brain holding it all together.",
+    practitioner: "You have agents running. Now organise the system. Data, plugins, Skills, all in one coherent OS that compounds week after week.",
+    operator:     "You direct a personal operating system. Work happens while you sleep. This is the ceiling of ClaudeOS."
+  }
+};
+
+const OVERALL_COPY = {
+  casual: {
+    band: "Casual user",
+    narrative: "You're at the start. Most people are. The good news is the path is mapped, and the gap from where you are to where Operators sit is six weeks of focused work, not years."
+  },
+  active: {
+    band: "Active user",
+    narrative: "You're getting value from Claude. You're also missing 80% of what's possible. The Accelerator closes that gap level by level, in the right order."
+  },
+  power: {
+    band: "Power user",
+    narrative: "You've built something. You're ahead of 99% of users. The Accelerator is where you go from power user to Operator. A full personal OS that runs itself."
+  },
+  operator: {
+    band: "ClaudeOS Operator",
+    narrative: "You're already operating at the top of the stack. The Accelerator is for compounding what you've built and connecting with other Operators who think this way."
+  }
+};
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+const state = {
+  email: '',
+  answers: {},      // { questionIndex: scoreValue }
+  currentQ: 0,
+};
+
+/* =========================================================================
+   UTIL
+   ========================================================================= */
+function show(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+function levelBand(score /* 0-100 */) {
+  if (score <= 25) return { id: 'beginner',     label: 'Beginner' };
+  if (score <= 50) return { id: 'explorer',     label: 'Explorer' };
+  if (score <= 75) return { id: 'practitioner', label: 'Practitioner' };
+  return                  { id: 'operator',     label: 'Operator' };
+}
+
+function overallBand(score /* 0-100 */) {
+  if (score <= 30) return 'casual';
+  if (score <= 55) return 'active';
+  if (score <= 75) return 'power';
+  return 'operator';
+}
+
+/* =========================================================================
+   WELCOME SCREEN
+   ========================================================================= */
+document.getElementById('welcomeForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const email = document.getElementById('emailInput').value.trim();
+  const errEl = document.getElementById('welcomeError');
+  if (!isValidEmail(email)) {
+    errEl.textContent = "Please enter a valid email address.";
+    return;
+  }
+  errEl.textContent = "";
+  state.email = email;
+  state.currentQ = 0;
+  state.answers = {};
+  document.getElementById('headerMeta').textContent = `Question 1 of ${QUESTIONS.length}`;
+  renderQuestion();
+  show('screen-quiz');
+});
+
+/* =========================================================================
+   QUIZ SCREEN
+   ========================================================================= */
+function renderQuestion() {
+  const idx = state.currentQ;
+  const q = QUESTIONS[idx];
+  const level = LEVELS.find(l => l.id === q.level);
+  const counter = document.getElementById('quizCounter');
+  const bar = document.getElementById('quizBar');
+  const back = document.getElementById('quizBack');
+  const content = document.getElementById('quizContent');
+
+  counter.textContent = `Question ${idx + 1} of ${QUESTIONS.length}`;
+  bar.style.width = `${((idx) / QUESTIONS.length) * 100}%`;
+  back.disabled = idx === 0;
+  document.getElementById('headerMeta').textContent = `Question ${idx + 1} of ${QUESTIONS.length}`;
+
+  const selectedScore = state.answers[idx];
+
+  content.innerHTML = `
+    <div class="quiz-level-tag">Level ${level.num} · ${level.name}</div>
+    <div class="quiz-question">${q.text}</div>
+    <div class="quiz-options">
+      ${q.options.map((opt, i) => `
+        <button class="quiz-option ${selectedScore === opt.score ? 'selected' : ''}" data-score="${opt.score}">
+          <span class="quiz-option-letter">${String.fromCharCode(65 + i)}</span>
+          <span>${opt.label}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  content.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const score = Number(btn.dataset.score);
+      state.answers[idx] = score;
+      content.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      // brief delay so the user sees their selection register
+      setTimeout(() => {
+        if (idx + 1 < QUESTIONS.length) {
+          state.currentQ = idx + 1;
+          renderQuestion();
+        } else {
+          finishQuiz();
+        }
+      }, 280);
+    });
+  });
+}
+
+document.getElementById('quizBack').addEventListener('click', () => {
+  if (state.currentQ > 0) {
+    state.currentQ -= 1;
+    renderQuestion();
+  }
+});
+
+/* =========================================================================
+   FINISH + SCORE
+   ========================================================================= */
+function calculateScores() {
+  // Per-level: sum of 2 questions / 16 max → /100
+  const perLevel = {};
+  LEVELS.forEach(lvl => {
+    const indices = QUESTIONS
+      .map((q, i) => q.level === lvl.id ? i : null)
+      .filter(v => v !== null);
+    const raw = indices.reduce((s, i) => s + (state.answers[i] || 0), 0);
+    perLevel[lvl.id] = Math.round((raw / 16) * 100);
+  });
+
+  // Overall: sum of all 12 / 96 max → /100
+  const totalRaw = Object.values(state.answers).reduce((s, v) => s + v, 0);
+  const overall = Math.round((totalRaw / 96) * 100);
+
+  return { perLevel, overall };
+}
+
+async function finishQuiz() {
+  document.getElementById('quizBar').style.width = '100%';
+  show('screen-loading');
+
+  const scores = calculateScores();
+
+  // Submit to webhooks (non-blocking — UI continues even if webhook fails)
+  submitToWebhooks(scores).catch(err => console.error('Webhook submission failed:', err));
+
+  // Render results after a short delay so the loading state has presence
+  setTimeout(() => {
+    // Show results screen FIRST so the radar canvas has real dimensions
+    show('screen-results');
+    // Wait one frame for layout, then render. Wrap so a chart failure doesn't blank the page.
+    requestAnimationFrame(() => {
+      try {
+        renderResults(scores);
+      } catch (err) {
+        console.error('Render failed:', err);
+        // Even if rendering errored, at least set the score number so the page isn't blank
+        try { document.getElementById('scoreNumber').textContent = scores.overall; } catch (_) {}
+      }
+    });
+  }, 1400);
+}
+
+async function submitToWebhooks(scores) {
+  const body = document.body;
+  const payload = {
+    email: state.email,
+    chat_score:      scores.perLevel.chat,
+    customise_score: scores.perLevel.customise,
+    create_score:    scores.perLevel.create,
+    connect_score:   scores.perLevel.connect,
+    code_score:      scores.perLevel.code,
+    command_score:   scores.perLevel.command,
+    overall_score:   scores.overall,
+    overall_band:    overallBand(scores.overall),
+    submitted_at:    new Date().toISOString(),
+    source:          'claude-score-scorecard'
+  };
+  console.log('Submission payload:', payload);
+
+  const ghl      = body.dataset.ghlWebhook;
+  const airtable = body.dataset.airtableWebhook;
+
+  const requests = [];
+  if (ghl)      requests.push(fetch(ghl,      { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) }));
+  if (airtable) requests.push(fetch(airtable, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) }));
+
+  if (requests.length === 0) {
+    console.warn('No webhook URLs configured. Set data-ghl-webhook and data-airtable-webhook on <body>.');
+    return;
+  }
+  await Promise.allSettled(requests);
+}
+
+/* =========================================================================
+   RESULTS SCREEN
+   ========================================================================= */
+function renderResults({ perLevel, overall }) {
+  document.getElementById('scoreNumber').textContent = overall;
+  const bandKey = overallBand(overall);
+  const overallCopy = OVERALL_COPY[bandKey];
+  document.getElementById('scoreBand').textContent = overallCopy.band.toUpperCase();
+  document.getElementById('scoreNarrative').textContent = overallCopy.narrative;
+  document.getElementById('footerEmail').textContent = state.email;
+  document.getElementById('headerMeta').textContent = 'Your Claude score';
+
+  // Level cards
+  const grid = document.getElementById('levelGrid');
+  grid.innerHTML = LEVELS.map(lvl => {
+    const score = perLevel[lvl.id];
+    const band = levelBand(score);
+    const copy = LEVEL_COPY[lvl.id][band.id];
+    return `
+      <div class="level-card" data-band="${band.id}">
+        <div class="level-card-top">
+          <div class="level-card-num">${lvl.num}</div>
+          <div class="level-card-score">${score}</div>
+        </div>
+        <div>
+          <div class="level-card-name">${lvl.name}</div>
+          <div class="level-card-band">${band.label}</div>
+        </div>
+        <div class="level-card-bar"><div class="level-card-bar-fill" style="width:${score}%"></div></div>
+        <p class="level-card-copy">${copy}</p>
+      </div>
+    `;
+  }).join('');
+
+  // CTA cards — re-order based on band
+  renderCTAs(bandKey);
+
+  // Radar chart — wrapped so a chart failure can't blank the page
+  try { renderRadar(perLevel); } catch (err) { console.error('Radar failed:', err); }
+}
+
+function renderCTAs(bandKey) {
+  const grid = document.getElementById('ctaGrid');
+  const body = document.body;
+  const callUrl = body.dataset.callUrl;
+  const checkoutUrl = body.dataset.checkoutUrl;
+  const headline = document.getElementById('ctaHeadline');
+  const sub = document.getElementById('ctaSub');
+
+  const callCard = `
+    <a class="cta-card" href="${callUrl}" target="_blank" rel="noopener">
+      <div class="cta-card-kicker">Talk first</div>
+      <div class="cta-card-title">Speak to Ross</div>
+      <p class="cta-card-desc">Get a 1:1 walkthrough of your score and where the Accelerator would take you.</p>
+      <div class="cta-card-arrow">Book a call <span>→</span></div>
+    </a>
+  `;
+  const joinCard = `
+    <a class="cta-card primary" href="${checkoutUrl}" target="_blank" rel="noopener">
+      <div class="cta-card-kicker">Build your OS</div>
+      <div class="cta-card-title">Join the Accelerator</div>
+      <p class="cta-card-desc">6 weeks. 6 levels. The full ClaudeOS, installed. Cohort 2 starts soon.</p>
+      <div class="cta-card-arrow">Get started <span>→</span></div>
+    </a>
+  `;
+
+  // Adapt headline + ordering by band
+  if (bandKey === 'casual' || bandKey === 'active') {
+    headline.textContent = 'Start moving up the levels.';
+    sub.textContent = 'Where you are now is where most professionals are. The Accelerator is the fastest path to ClaudeOS Operator.';
+    grid.innerHTML = callCard + joinCard;
+  } else if (bandKey === 'power') {
+    headline.textContent = 'Close the gap to ClaudeOS Operator.';
+    sub.textContent = "You've built something real. The Accelerator compounds what you have and fills the gaps in 6 weeks.";
+    grid.innerHTML = callCard + joinCard;
+  } else {
+    headline.textContent = "You're operating. Now compound it.";
+    sub.textContent = "The Accelerator is where Operators meet other Operators. Sharper systems, sharper community, faster compounding.";
+    // Operator: join card first
+    grid.innerHTML = joinCard + callCard;
+    // Make join card 'primary' visually was already set; nothing else needed
+  }
+}
+
+function renderRadar(perLevel) {
+  // Guard: if Chart.js failed to load from CDN, render a fallback list and return.
+  if (typeof Chart === 'undefined') {
+    const wrap = document.querySelector('.radar-wrap');
+    if (wrap) {
+      wrap.innerHTML = LEVELS.map(l =>
+        `<div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);font-size:14px;">
+           <span style="color:var(--text);font-weight:600;">${l.name}</span>
+           <span style="color:var(--accent);font-weight:700;">${perLevel[l.id]}</span>
+         </div>`
+      ).join('');
+    }
+    return;
+  }
+
+  const canvas = document.getElementById('radarChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const data = LEVELS.map(l => perLevel[l.id]);
+  const labels = LEVELS.map(l => l.name);
+
+  // Destroy any prior chart so re-renders work
+  if (window._radar) window._radar.destroy();
+
+  window._radar = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Your score',
+        data,
+        backgroundColor: 'rgba(184, 197, 214, 0.18)',
+        borderColor: 'rgba(255, 255, 255, 0.95)',
+        borderWidth: 2,
+        pointBackgroundColor: '#FFFFFF',
+        pointBorderColor: '#FFFFFF',
+        pointHoverBackgroundColor: '#B8C5D6',
+        pointHoverBorderColor: '#FFFFFF',
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { display: false, stepSize: 25 },
+          grid: { color: 'rgba(255,255,255,0.10)' },
+          angleLines: { color: 'rgba(255,255,255,0.10)' },
+          pointLabels: {
+            color: '#A0A0A8',
+            font: { family: "Inter, sans-serif", size: 13, weight: '600' },
+          }
+        }
+      }
+    }
+  });
+}
+
+/* =========================================================================
+   DEV: keyboard shortcut to skip to results with a sample score
+   ========================================================================= */
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'D' && e.shiftKey && e.metaKey) {
+    state.email = 'demo@aipowered.xyz';
+    state.answers = {};
+    QUESTIONS.forEach((q, i) => { state.answers[i] = q.options[Math.floor(Math.random() * 4)].score; });
+    const scores = calculateScores();
+    renderResults(scores);
+    show('screen-results');
+  }
+});
+</script>
+</body>
+</html>
