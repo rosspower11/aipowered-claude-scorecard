@@ -668,82 +668,82 @@ const LEVELS = [
 
 const QUESTIONS = [
   // CHAT
-  { level: 'chat', text: "When you open Claude, you typically...", options: [
-    { label: "Type a quick question the way you would in Google or ChatGPT", score: 1 },
-    { label: "Write a sentence or two with a bit of context", score: 3 },
-    { label: "Use a structured prompt with role, context, and the output you want", score: 5 },
-    { label: "Have reusable prompt templates and Projects with memory set up around how I work", score: 8 },
+  { level: 'chat', text: "When I open Claude, I usually...", options: [
+    { label: "Type a quick question like it's Google", score: 1 },
+    { label: "Add a sentence or two of context", score: 3 },
+    { label: "Write a proper prompt with role and goal", score: 5 },
+    { label: "Run from templates with Projects and Memory dialled in", score: 8 },
   ]},
-  { level: 'chat', text: "How are you using Claude Projects and Memory?", options: [
-    { label: "I haven't set up Projects or used Memory features", score: 1 },
-    { label: "I have one or two Projects with some files in them", score: 3 },
-    { label: "Several Projects organised by area of work, with knowledge loaded in", score: 5 },
-    { label: "Projects, Memory, and custom instructions all configured around how I actually work", score: 8 },
+  { level: 'chat', text: "With Claude Projects and Memory, I...", options: [
+    { label: "Haven't really touched them", score: 1 },
+    { label: "Have one or two Projects with some files", score: 3 },
+    { label: "Have multiple Projects organised by area of work", score: 5 },
+    { label: "Have a setup dialled in around how I actually work", score: 8 },
   ]},
   // CUSTOMISE
-  { level: 'customise', text: "How are you using Claude Skills right now?", options: [
-    { label: "I'm not sure what Skills are", score: 1 },
-    { label: "I've used a few of the stock Skills", score: 3 },
-    { label: "I tweak stock Skills to match my workflow", score: 5 },
-    { label: "I've built my own Skills that encode my expertise, voice, and processes", score: 8 },
+  { level: 'customise', text: "With Claude Skills, I...", options: [
+    { label: "Don't really know what they are", score: 1 },
+    { label: "Use a few of the existing built-in Skills", score: 3 },
+    { label: "Create my own Skills", score: 5 },
+    { label: "Have multiple Skills connected as plugins", score: 8 },
   ]},
-  { level: 'customise', text: "When Claude writes for you, does it sound like you?", options: [
-    { label: "Pretty obvious it's AI. Generic and stiff", score: 1 },
-    { label: "Sometimes, depending on what I ask", score: 3 },
-    { label: "After I edit it, yes", score: 5 },
-    { label: "Yes. My voice and standards are encoded in a Skill so it's consistent every time", score: 8 },
+  { level: 'customise', text: "When Claude writes for me...", options: [
+    { label: "This sounds SO AI", score: 1 },
+    { label: "This sounds a bit AI, human-ish, but not me", score: 3 },
+    { label: "This sounds like me but needs some fixes", score: 5 },
+    { label: "This is literally me", score: 8 },
   ]},
   // CREATE
-  { level: 'create', text: "The last time you needed a polished doc, deck, or social asset, you...", options: [
-    { label: "Built it manually in Docs, Canva, or PowerPoint", score: 1 },
-    { label: "Got Claude to draft text, then formatted it yourself", score: 3 },
-    { label: "Had Claude build the artifact in one go and edited from there", score: 5 },
-    { label: "Used a Skill that produces branded, ready-to-ship artifacts on demand", score: 8 },
+  { level: 'create', text: "The last thing I 'built' with Claude was...", options: [
+    { label: "A document or a deck", score: 1 },
+    { label: "A no-code automation", score: 3 },
+    { label: "A script or a basic web page", score: 5 },
+    { label: "An app or dashboard, deployed live", score: 8 },
   ]},
-  { level: 'create', text: "How long does it take you to ship a polished deliverable (deck, doc, social post)?", options: [
-    { label: "Hours to days. Often a weekend", score: 1 },
-    { label: "A few hours, with several rounds of editing", score: 3 },
-    { label: "Under an hour for most things", score: 5 },
-    { label: "Minutes. Claude produces it, I review and ship", score: 8 },
+  { level: 'create', text: "When I make a polished doc, deck, or post, it...", options: [
+    { label: "Feels longer with AI than doing it myself", score: 1 },
+    { label: "Takes hours, loads of editing", score: 3 },
+    { label: "Goes much faster with AI, but no custom Skills", score: 5 },
+    { label: "Happens immediately with my custom Skills", score: 8 },
   ]},
   // CONNECT
-  { level: 'connect', text: "How is Claude connected to your other tools (Gmail, Drive, Notion, Slack, Calendar)?", options: [
-    { label: "It isn't. I copy and paste between Claude and other apps", score: 1 },
-    { label: "One or two basic integrations are set up", score: 3 },
-    { label: "Multiple connectors or MCPs running so Claude can read across my stack", score: 5 },
-    { label: "Claude is the hub. Context flows in from every tool, actions flow back out", score: 8 },
+  { level: 'connect', text: "With Claude and my other tools (Gmail, Drive, Slack)...", options: [
+    { label: "I copy-paste between them", score: 1 },
+    { label: "I've connected one or two", score: 3 },
+    { label: "I have several connectors running", score: 5 },
+    { label: "Claude is the hub. Everything flows through it", score: 8 },
   ]},
-  { level: 'connect', text: "When something happens in another tool (a new email, a calendar event, a file in Drive), can Claude react?", options: [
-    { label: "No. Claude doesn't know about it", score: 1 },
-    { label: "Only if I tell Claude what happened", score: 3 },
-    { label: "Yes, for some workflows I've set up", score: 5 },
-    { label: "Yes. Claude is wired with triggers that fire automatically", score: 8 },
+  { level: 'connect', text: "When stuff happens in my other tools (an email, a meeting, a new file)...", options: [
+    { label: "I tell Claude manually if I want it involved", score: 1 },
+    { label: "I sometimes ask Claude to react", score: 3 },
+    { label: "A few workflows pull events into Claude", score: 5 },
+    { label: "Triggers are wired. Claude reacts automatically", score: 8 },
   ]},
   // CODE
-  { level: 'code', text: "When you have an idea for a tool, dashboard, or app, you...", options: [
-    { label: "Write it down and hope to find a developer one day", score: 1 },
-    { label: "Try to build a version in a no-code tool", score: 3 },
-    { label: "Use Claude to generate code I can deploy somewhere", score: 5 },
-    { label: "Ship working software with Claude Code, deployed to a live URL", score: 8 },
+  { level: 'code', text: "When I want to build a landing page or app...", options: [
+    { label: "Landing page? I've never even clicked on Claude Code", score: 1 },
+    { label: "I've built things in Claude but never put one live", score: 3 },
+    { label: "I've built full tools. Someone else helped me put them live", score: 5 },
+    { label: "I've shipped something live myself with GitHub and Vercel", score: 8 },
   ]},
-  { level: 'code', text: "The last thing you 'built' with Claude was...", options: [
-    { label: "A document or a deck", score: 1 },
-    { label: "An automation in a no-code tool", score: 3 },
-    { label: "A working script or a basic web page", score: 5 },
-    { label: "A full app, dashboard, or internal tool deployed live", score: 8 },
+  { level: 'code', text: "With Claude Code, I...", options: [
+    { label: "Have never used it", score: 1 },
+    { label: "Use Claude Code inside the app to deploy", score: 3 },
+    { label: "Run Claude Code in a code editor like Cursor or VS Code, making real-time edits", score: 5 },
+    { label: "Run full agentic mode with code editors and live agents", score: 8 },
   ]},
   // COMMAND
-  { level: 'command', text: "How much of your recurring work (follow-ups, research, reporting, content) runs without you?", options: [
-    { label: "None. I do everything manually", score: 1 },
-    { label: "A few small automations", score: 3 },
-    { label: "Several scheduled Claude tasks running on a cadence", score: 5 },
-    { label: "A stack of agents handling the bulk of recurring work. Things ship while I sleep", score: 8 },
+  { level: 'command', text: "My personal command centre for Skills and plugins...", options: [
+    { label: "I don't have any saved Skills or plugins", score: 1 },
+    { label: "I have Skills, but they're not saved anywhere", score: 3 },
+    { label: "I have some Skills saved in GitHub or Notion", score: 5 },
+    { label: "I run a full command centre with live Skills and plugins connected", score: 8 },
   ]},
-  { level: 'command', text: "How is your Claude environment organised: data, plugins, Skills, projects?", options: [
-    { label: "Scattered, or not really set up", score: 1 },
-    { label: "Some folders and projects, but nothing systematic", score: 3 },
-    { label: "Organised projects with Skills set up for the work I repeat", score: 5 },
-    { label: "A full personal OS. Second brain, plugins, Skills, and agents all working together", score: 8 },
+  { level: 'command', text: "With agents and automations, I...", options: [
+    { label: "What the hell is an agent?", score: 1 },
+    { label: "I've tried a scheduled task", score: 3 },
+    { label: "I've built a routine inside Claude", score: 5 },
+    { label: "I run full agentic mode from a code terminal. Jarvis level beast", score: 8 },
   ]},
 ];
 
