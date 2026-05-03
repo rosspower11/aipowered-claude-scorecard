@@ -516,7 +516,7 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 </head>
 
 <body
-  data-ghl-webhook=""
+  data-ghl-webhook="https://services.leadconnectorhq.com/hooks/S6W5Rm24k3hr99ZywHxA/webhook-trigger/908ebdf2-0cb3-4bba-bc3b-30e37b20d614"
   data-airtable-webhook=""
   data-checkout-url="https://checkout.aipowered.xyz/"
   data-call-url="https://claude.aipowered.xyz/#book-a-call"
@@ -1197,29 +1197,39 @@ async function submitToWebhooks(scores) {
   const goalLabel = (state.goal === 'other' && state.goalOther) ? state.goalOther : goalEntry.label;
 
   const payload = {
-    first_name:       state.firstName,
-    last_name:        state.lastName,
-    full_name:        `${state.firstName} ${state.lastName}`.trim(),
-    email:            state.email,
-    chat_score:       scores.perLevel.chat,
-    customise_score:  scores.perLevel.customise,
-    create_score:     scores.perLevel.create,
-    connect_score:    scores.perLevel.connect,
-    code_score:       scores.perLevel.code,
-    command_score:    scores.perLevel.command,
-    overall_score:    scores.overall,
-    overall_band:     bandKey,
-    overall_band_label: OVERALL_COPY[bandKey].band,
-    goal:             state.goal,
-    goal_label:       goalLabel,
-    goal_other_text:  state.goal === 'other' ? state.goalOther : '',
-    goal_destination: note.goalDestination,
-    strength_levels:  note.strengths.map(s => s.id),
-    gap_levels:       note.gaps.map(g => g.id),
-    recommendation_text: [...note.paragraphs, note.closer].join('\n\n'),
-    cohort_date:      body.dataset.cohortDate || null,
-    submitted_at:     new Date().toISOString(),
-    source:           'claude-score-scorecard'
+    // ----- GHL-expected field names (match the keys configured in the GHL workflow) -----
+    first_name:           state.firstName,
+    last_name:            state.lastName,
+    email:                state.email,
+    overall_score:        scores.overall,
+    score_chat:           scores.perLevel.chat,
+    score_chat_customise: scores.perLevel.customise,
+    score_chat_create:    scores.perLevel.create,
+    score_chat_connect:   scores.perLevel.connect,
+    score_chat_code:      scores.perLevel.code,
+    score_chat_command:   scores.perLevel.command,
+    your_goal:            goalLabel,
+
+    // ----- Extra fields for richer downstream use (Airtable, future GHL fields) -----
+    full_name:            `${state.firstName} ${state.lastName}`.trim(),
+    chat_score:           scores.perLevel.chat,
+    customise_score:      scores.perLevel.customise,
+    create_score:         scores.perLevel.create,
+    connect_score:        scores.perLevel.connect,
+    code_score:           scores.perLevel.code,
+    command_score:        scores.perLevel.command,
+    overall_band:         bandKey,
+    overall_band_label:   OVERALL_COPY[bandKey].band,
+    goal:                 state.goal,
+    goal_label:           goalLabel,
+    goal_other_text:      state.goal === 'other' ? state.goalOther : '',
+    goal_destination:     note.goalDestination,
+    strength_levels:      note.strengths.map(s => s.id),
+    gap_levels:           note.gaps.map(g => g.id),
+    recommendation_text:  [...note.paragraphs, note.closer].join('\n\n'),
+    cohort_date:          body.dataset.cohortDate || null,
+    submitted_at:         new Date().toISOString(),
+    source:               'claude-score-scorecard'
   };
   console.log('Submission payload:', payload);
 
