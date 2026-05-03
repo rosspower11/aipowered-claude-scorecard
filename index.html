@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What's Your Claude Score? | AI Powered x Claude</title>
-<meta name="description" content="Find out where you sit on the 6 levels of Claude. 13 questions, under 3 minutes, and a personalised recommendation for your next steps.">
+<meta name="description" content="Find out how well you're actually using Claude. Get your free personalised score in under 3 minutes.">
 
 <link rel="icon" type="image/jpeg" href="/AiPowered_Submark_BlackBG_Small.jpg">
 <link rel="apple-touch-icon" href="/AiPowered_Submark_BlackBG_Small.jpg">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://claude-score.aipowered.xyz/">
 <meta property="og:title" content="What's Your Claude Score? | AI Powered x Claude">
-<meta property="og:description" content="Find out where you sit on the 6 levels of Claude. 13 questions, under 3 minutes, and a personalised recommendation for your next steps.">
+<meta property="og:description" content="Find out how well you're actually using Claude. Get your free personalised score in under 3 minutes.">
 <meta property="og:image" content="https://claude-score.aipowered.xyz/social-preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://claude-score.aipowered.xyz/">
 <meta name="twitter:title" content="What's Your Claude Score? | AI Powered x Claude">
-<meta name="twitter:description" content="Find out where you sit on the 6 levels of Claude. 13 questions, under 3 minutes, and a personalised recommendation for your next steps.">
+<meta name="twitter:description" content="Find out how well you're actually using Claude. Get your free personalised score in under 3 minutes.">
 <meta name="twitter:image" content="https://claude-score.aipowered.xyz/social-preview.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,15 +86,20 @@ input { font-family: inherit; }
 /* HEADER */
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 32px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px 24px;
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   background: rgba(0,0,0,0.7);
   border-bottom: 1px solid var(--border);
 }
-.logo { font-size: 14px; font-weight: 500; letter-spacing: 0.04em; }
-.logo span { color: var(--text-muted); margin: 0 6px; }
-.header-meta { font-size: 12px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.logo {
+  display: inline-flex; align-items: center; gap: 18px;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+.logo:hover { opacity: 1; }
+.logo-img { height: 22px; width: auto; display: block; }
+.logo-img-claude { height: 18px; }
 
 /* LAYOUT */
 main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
@@ -129,32 +134,49 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 .btn-arrow { transition: transform 0.2s ease; }
 .btn:hover .btn-arrow { transform: translateX(3px); }
 
-/* ============== WELCOME SCREEN ============== */
-.welcome { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; min-height: calc(100vh - 200px); }
-@media (min-width: 1100px) {
-  .welcome { grid-template-columns: 1.05fr 0.95fr; gap: 72px; }
+/* ============== WELCOME SCREEN — mobile-first, single column ============== */
+.welcome {
+  display: flex; flex-direction: column;
+  gap: 40px;
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: calc(100vh - 200px);
+  justify-content: center;
 }
-.welcome-left .pill { margin-bottom: 28px; }
-.welcome-headline { margin-bottom: 24px; }
-.welcome-headline .welcome-title {
+.welcome-headline { display: flex; flex-direction: column; gap: 18px; }
+.welcome-title {
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(40px, 5.5vw, 68px);
-  line-height: 1;
+  font-size: clamp(34px, 7vw, 60px);
+  line-height: 1.05;
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin: 0;
 }
-.welcome-headline .welcome-sub-title {
+.welcome-sub-title {
   font-family: var(--display);
   font-weight: 600;
-  font-size: clamp(22px, 2.6vw, 32px);
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  font-size: clamp(18px, 2.6vw, 24px);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   color: var(--accent);
 }
-.welcome-sub { font-size: 17px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 36px; max-width: 540px; }
-.welcome-form { display: flex; flex-direction: column; gap: 14px; max-width: 520px; }
+.welcome-spoiler {
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.welcome-spoiler-tag {
+  font-style: normal;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-right: 6px;
+}
+.welcome-form { display: flex; flex-direction: column; gap: 14px; }
 .welcome-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 480px) { .welcome-form-row { grid-template-columns: 1fr; } }
 .welcome-form input {
@@ -169,51 +191,15 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 }
 .welcome-form input:focus { border-color: var(--text); background: var(--surface-hover); }
 .welcome-form input::placeholder { color: var(--text-muted); }
-.welcome-form .btn { width: 100%; padding: 22px; }
-.welcome-meta { display: flex; flex-direction: column; gap: 16px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); max-width: 520px; }
-.welcome-meta-row { display: flex; align-items: baseline; gap: 24px; }
-.welcome-meta-row .kicker { min-width: 92px; }
-.welcome-meta-row .value { font-size: 16px; font-weight: 600; color: var(--text); }
-.welcome-error { color: #FF6B6B; font-size: 13px; margin-top: 8px; min-height: 16px; }
-
-.welcome-right {
-  position: relative;
-  background: linear-gradient(135deg, #1A1F2E 0%, #0A0D14 100%);
-  border: 1px solid var(--border);
-  padding: 32px;
-  min-height: auto;
-  display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
-  overflow: hidden;
-}
-@media (min-width: 1100px) {
-  .welcome-right { padding: 48px; min-height: 480px; }
-}
-.welcome-right::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 80% 20%, rgba(184, 197, 214, 0.08), transparent 50%);
-  pointer-events: none;
-}
-.levels-stack { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
-.level-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+.welcome-form .btn { width: 100%; padding: 22px; margin-top: 4px; }
+.welcome-time-note {
+  text-align: center;
   font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
 }
-.level-row:nth-child(1) { background: rgba(184, 197, 214, 0.04); }
-.level-row:nth-child(2) { background: rgba(184, 197, 214, 0.06); }
-.level-row:nth-child(3) { background: rgba(184, 197, 214, 0.08); }
-.level-row:nth-child(4) { background: rgba(184, 197, 214, 0.10); }
-.level-row:nth-child(5) { background: rgba(184, 197, 214, 0.13); }
-.level-row:nth-child(6) { background: rgba(184, 197, 214, 0.18); border-color: rgba(184, 197, 214, 0.25); }
-.level-row .num { color: var(--text-muted); font-weight: 500; min-width: 24px; }
-.level-row .name { font-weight: 700; color: var(--text); flex: 1; padding-left: 16px; font-family: var(--body); letter-spacing: 0.02em; }
-.level-row .week { color: var(--text-muted); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
-.welcome-right-caption { position: relative; z-index: 1; padding-top: 32px; border-top: 1px solid var(--border); margin-top: 24px; }
-.welcome-right-caption .kicker { color: var(--accent-soft); margin-bottom: 8px; }
-.welcome-right-caption p { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+.welcome-error { color: #FF6B6B; font-size: 13px; min-height: 16px; text-align: center; }
 
 /* ============== QUIZ SCREEN ============== */
 .quiz { max-width: 760px; margin: 0 auto; }
@@ -526,49 +512,30 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 >
 
 <header class="header">
-  <div class="logo">ai powered <span>×</span> Claude</div>
-  <div class="header-meta" id="headerMeta">The Claude Score</div>
+  <div class="logo">
+    <img class="logo-img" src="https://aipowered-assets.com/logos/AiPowered_Primary_White_TransparentBG_Small_nf53pz.png" alt="AI Powered">
+    <img class="logo-img logo-img-claude" src="https://aipowered-assets.com/logos/claude%20logo%20white%20no%20background.png" alt="Claude">
+  </div>
 </header>
 
 <!-- ======================== WELCOME SCREEN ======================== -->
 <main class="screen active" id="screen-welcome">
   <div class="welcome">
-    <div class="welcome-left">
-      <div class="pill"><span class="pill-dot"></span>The ClaudeOS Game</div>
-      <div class="welcome-headline">
-        <div class="welcome-title">What's your<br>Claude score?</div>
-        <div class="welcome-sub-title">Find out where you sit on the 6 levels.</div>
-      </div>
-      <p class="welcome-sub">13 questions, less than 3 minutes, and a personalised recommendation for your next steps with Claude.</p>
-      <form class="welcome-form" id="welcomeForm">
-        <div class="welcome-form-row">
-          <input type="text" id="firstNameInput" placeholder="First name" autocomplete="given-name" required>
-          <input type="text" id="lastNameInput" placeholder="Last name" autocomplete="family-name" required>
-        </div>
-        <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email" required>
-        <button type="submit" class="btn btn-primary">Get my score <span class="btn-arrow">→</span></button>
-        <div class="welcome-error" id="welcomeError"></div>
-      </form>
-      <div class="welcome-meta">
-        <div class="welcome-meta-row"><span class="kicker">Time</span><span class="value">Under 3 minutes</span></div>
-        <div class="welcome-meta-row"><span class="kicker">Format</span><span class="value">13 questions, multi-choice</span></div>
-        <div class="welcome-meta-row"><span class="kicker">Output</span><span class="value">A personalised recommendation for your next steps</span></div>
-      </div>
+    <div class="welcome-headline">
+      <h1 class="welcome-title">Find out how well you're actually using Claude.</h1>
+      <div class="welcome-sub-title">Get your free personalised score.</div>
+      <div class="welcome-spoiler"><span class="welcome-spoiler-tag">Spoiler:</span> probably not as well as you think.</div>
     </div>
-    <div class="welcome-right">
-      <div class="levels-stack">
-        <div class="level-row"><span class="num">01</span><span class="name">Chat</span><span class="week">Level 1</span></div>
-        <div class="level-row"><span class="num">02</span><span class="name">Customise</span><span class="week">Level 2</span></div>
-        <div class="level-row"><span class="num">03</span><span class="name">Create</span><span class="week">Level 3</span></div>
-        <div class="level-row"><span class="num">04</span><span class="name">Connect</span><span class="week">Level 4</span></div>
-        <div class="level-row"><span class="num">05</span><span class="name">Code</span><span class="week">Level 5</span></div>
-        <div class="level-row"><span class="num">06</span><span class="name">Command</span><span class="week">Level 6</span></div>
+    <form class="welcome-form" id="welcomeForm">
+      <div class="welcome-form-row">
+        <input type="text" id="firstNameInput" placeholder="First name" autocomplete="given-name" required>
+        <input type="text" id="lastNameInput" placeholder="Last name" autocomplete="family-name" required>
       </div>
-      <div class="welcome-right-caption">
-        <div class="kicker">The 6 levels of Claude</div>
-        <p>Each level builds on the last. By the top, you're running a personal operating system that does the work while you sleep.</p>
-      </div>
-    </div>
+      <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email" required>
+      <button type="submit" class="btn btn-primary">Start now <span class="btn-arrow">→</span></button>
+      <div class="welcome-time-note">Takes less than 3 minutes.</div>
+      <div class="welcome-error" id="welcomeError"></div>
+    </form>
   </div>
 </main>
 
@@ -1024,7 +991,6 @@ document.getElementById('welcomeForm').addEventListener('submit', (e) => {
   state.answers   = {};
   state.goal      = '';
   state.goalOther = '';
-  document.getElementById('headerMeta').textContent = `Question 1 of ${QUESTIONS.length}`;
   renderQuestion();
   show('screen-quiz');
 });
@@ -1044,7 +1010,6 @@ function renderQuestion() {
   counter.textContent = `Question ${idx + 1} of ${QUESTIONS.length}`;
   bar.style.width = `${((idx) / QUESTIONS.length) * 100}%`;
   back.disabled = idx === 0;
-  document.getElementById('headerMeta').textContent = `Question ${idx + 1} of ${QUESTIONS.length}`;
 
   const selectedScore = state.answers[idx];
 
@@ -1092,7 +1057,6 @@ document.getElementById('quizBack').addEventListener('click', () => {
    ========================================================================= */
 function showGoalScreen() {
   document.getElementById('quizBar').style.width = '100%';
-  document.getElementById('headerMeta').textContent = 'One last thing';
   // reset selections so going back-then-forward starts clean
   document.querySelectorAll('#goalOptions .goal-option').forEach(b => b.classList.remove('selected'));
   document.getElementById('goalOtherWrap').hidden = true;
@@ -1257,7 +1221,6 @@ function renderResults({ perLevel, overall }) {
   document.getElementById('scoreBand').textContent = overallCopy.band.toUpperCase();
   document.getElementById('scoreNarrative').textContent = overallCopy.narrative;
   document.getElementById('footerEmail').textContent = state.email;
-  document.getElementById('headerMeta').textContent = 'Your Claude score';
 
   // Personal note from Ross (built from per-level scores + goal)
   try { renderPersonalNote(perLevel, bandKey); } catch (err) { console.error('Personal note failed:', err); }
