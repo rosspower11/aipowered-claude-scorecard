@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What's Your Claude Score? | AI Powered x Claude</title>
-<meta name="description" content="Find out where you sit on the 6 levels of Claude. 12 questions. 5 minutes. Your personal ClaudeOS roadmap.">
+<meta name="description" content="Find out where you sit on the 6 levels of Claude. 13 questions, under 3 minutes, and a personalised recommendation for your next steps.">
 
 <link rel="icon" type="image/jpeg" href="/AiPowered_Submark_BlackBG_Small.jpg">
 <link rel="apple-touch-icon" href="/AiPowered_Submark_BlackBG_Small.jpg">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://claude-score.aipowered.xyz/">
 <meta property="og:title" content="What's Your Claude Score? | AI Powered x Claude">
-<meta property="og:description" content="Find out where you sit on the 6 levels of Claude. 12 questions. 5 minutes. Your personal ClaudeOS roadmap.">
+<meta property="og:description" content="Find out where you sit on the 6 levels of Claude. 13 questions, under 3 minutes, and a personalised recommendation for your next steps.">
 <meta property="og:image" content="https://claude-score.aipowered.xyz/social-preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://claude-score.aipowered.xyz/">
 <meta name="twitter:title" content="What's Your Claude Score? | AI Powered x Claude">
-<meta name="twitter:description" content="Find out where you sit on the 6 levels of Claude. 12 questions. 5 minutes. Your personal ClaudeOS roadmap.">
+<meta name="twitter:description" content="Find out where you sit on the 6 levels of Claude. 13 questions, under 3 minutes, and a personalised recommendation for your next steps.">
 <meta name="twitter:image" content="https://claude-score.aipowered.xyz/social-preview.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -331,6 +331,24 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 .score-total { font-size: clamp(32px, 5vw, 56px); font-weight: 600; color: var(--text-muted); letter-spacing: -0.02em; }
 .score-band { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 24px; }
 .score-narrative { font-size: 18px; color: var(--text-secondary); line-height: 1.6; max-width: 540px; }
+.score-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.score-cta {
+  display: inline-flex; align-items: center;
+  padding: 16px 24px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: 1px solid;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.score-cta:hover { transform: translateY(-1px); }
+.score-cta:active { transform: translateY(0); }
+.score-cta-primary { background: var(--text); color: #000; border-color: var(--text); }
+.score-cta-primary:hover { background: #F0F0F0; }
+.score-cta-secondary { background: transparent; color: var(--text); border-color: var(--border-strong); }
+.score-cta-secondary:hover { border-color: var(--text); background: var(--surface-hover); }
 
 .radar-wrap { background: var(--surface); border: 1px solid var(--border); padding: 32px; aspect-ratio: 1; max-width: 520px; margin: 0 auto; }
 .radar-wrap canvas { max-width: 100%; }
@@ -435,62 +453,31 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 .personal-note-cta .btn-arrow { transition: transform 0.2s ease; }
 .personal-note-cta:hover .btn-arrow { transform: translateY(2px); }
 
-/* COHORT CAROUSEL */
-.cohort-carousel { display: flex; flex-direction: column; gap: 14px; }
-.cohort-carousel-kicker { color: var(--text-muted); }
-.cohort-carousel-track {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  gap: 0;
+/* COHORT GRID */
+.cohort-grid-wrap { display: flex; flex-direction: column; gap: 14px; }
+.cohort-grid-kicker { color: var(--text-muted); }
+.cohort-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .cohort-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+}
+.cohort-grid-tile {
+  aspect-ratio: 1 / 1;
   background: #000;
   border: 1px solid var(--border);
-  aspect-ratio: 16 / 10;
-}
-.cohort-carousel-track::-webkit-scrollbar { display: none; }
-.cohort-carousel-slide {
-  flex: 0 0 100%;
-  scroll-snap-align: center;
-  display: flex; align-items: center; justify-content: center;
-  background: #000;
   overflow: hidden;
 }
-.cohort-carousel-slide img {
+.cohort-grid-tile img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.4s ease;
 }
-.cohort-carousel-controls {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px;
-}
-.cohort-carousel-arrow {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 36px; height: 36px;
-  font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-.cohort-carousel-arrow:hover { border-color: var(--text); background: var(--surface-hover); }
-.cohort-carousel-dots {
-  display: flex; gap: 8px;
-  flex: 1; justify-content: center;
-}
-.cohort-carousel-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--border-strong);
-  transition: background 0.15s ease, transform 0.15s ease;
-  cursor: pointer;
-  border: none;
-  padding: 0;
-}
-.cohort-carousel-dot.active { background: var(--text); transform: scale(1.2); }
+.cohort-grid-tile:hover img { transform: scale(1.04); }
 
 /* CTA SECTION */
 .cta-section { padding: 80px 0; }
@@ -552,7 +539,7 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
         <div class="welcome-title">What's your<br>Claude score?</div>
         <div class="welcome-sub-title">Find out where you sit on the 6 levels.</div>
       </div>
-      <p class="welcome-sub">12 questions. 5 minutes. Get a personal report on how you're using Claude today, and the levels you haven't unlocked yet.</p>
+      <p class="welcome-sub">13 questions, less than 3 minutes, and a personalised recommendation for your next steps with Claude.</p>
       <form class="welcome-form" id="welcomeForm">
         <div class="welcome-form-row">
           <input type="text" id="firstNameInput" placeholder="First name" autocomplete="given-name" required>
@@ -563,9 +550,9 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
         <div class="welcome-error" id="welcomeError"></div>
       </form>
       <div class="welcome-meta">
-        <div class="welcome-meta-row"><span class="kicker">Time</span><span class="value">5 minutes</span></div>
-        <div class="welcome-meta-row"><span class="kicker">Format</span><span class="value">12 questions, multi-choice</span></div>
-        <div class="welcome-meta-row"><span class="kicker">Output</span><span class="value">Your level, your score, your roadmap</span></div>
+        <div class="welcome-meta-row"><span class="kicker">Time</span><span class="value">Under 3 minutes</span></div>
+        <div class="welcome-meta-row"><span class="kicker">Format</span><span class="value">13 questions, multi-choice</span></div>
+        <div class="welcome-meta-row"><span class="kicker">Output</span><span class="value">A personalised recommendation for your next steps</span></div>
       </div>
     </div>
     <div class="welcome-right">
@@ -641,6 +628,10 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
       </div>
       <div class="score-band" id="scoreBand">CASUAL USER</div>
       <p class="score-narrative" id="scoreNarrative"></p>
+      <div class="score-ctas">
+        <button type="button" class="score-cta score-cta-secondary" data-scroll-to="personalNote">Learn more about your score</button>
+        <button type="button" class="score-cta score-cta-primary" data-scroll-to="joinCohortCard">Level up your Claude skills with Ross</button>
+      </div>
     </div>
     <div class="radar-wrap">
       <canvas id="radarChart"></canvas>
@@ -667,14 +658,9 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 
       <div class="personal-note-body" id="personalNoteBody"></div>
 
-      <div class="cohort-carousel" id="cohortCarousel" hidden>
-        <div class="cohort-carousel-kicker kicker">Real cohorts, real builders</div>
-        <div class="cohort-carousel-track" id="cohortCarouselTrack"></div>
-        <div class="cohort-carousel-controls">
-          <button class="cohort-carousel-arrow" id="cohortPrev" aria-label="Previous photo">←</button>
-          <div class="cohort-carousel-dots" id="cohortDots"></div>
-          <button class="cohort-carousel-arrow" id="cohortNext" aria-label="Next photo">→</button>
-        </div>
+      <div class="cohort-grid-wrap" id="cohortGridWrap" hidden>
+        <div class="cohort-grid-kicker kicker">Real cohorts, real builders</div>
+        <div class="cohort-grid" id="cohortGrid"></div>
       </div>
 
       <p class="personal-note-closer" id="personalNoteCloser"></p>
@@ -1002,6 +988,16 @@ function overallBand(score /* 0-100 */) {
   if (score <= 75) return 'power';
   return 'operator';
 }
+
+/* =========================================================================
+   GLOBAL: smooth-scroll for any element with [data-scroll-to="targetId"]
+   ========================================================================= */
+document.addEventListener('click', (e) => {
+  const trigger = e.target.closest('[data-scroll-to]');
+  if (!trigger) return;
+  const target = document.getElementById(trigger.dataset.scrollTo);
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 
 /* =========================================================================
    WELCOME SCREEN
@@ -1372,8 +1368,8 @@ function renderPersonalNote(perLevel, bandKey) {
     rossImg.style.display = 'none';
   }
 
-  // Cohort carousel — parse comma-separated URL list, hide section if none
-  renderCohortCarousel((body.dataset.cohortPhotos || '').split(',').map(s => s.trim()).filter(Boolean));
+  // Cohort grid — parse comma-separated URL list, hide section if none
+  renderCohortGrid((body.dataset.cohortPhotos || '').split(',').map(s => s.trim()).filter(Boolean));
 
   // CTA → smooth-scroll to the Join card
   const cta = document.getElementById('personalNoteCta');
@@ -1394,49 +1390,16 @@ function renderPersonalNote(perLevel, bandKey) {
   };
 }
 
-function renderCohortCarousel(urls) {
-  const carousel = document.getElementById('cohortCarousel');
-  const track    = document.getElementById('cohortCarouselTrack');
-  const dotsEl   = document.getElementById('cohortDots');
-  const prevBtn  = document.getElementById('cohortPrev');
-  const nextBtn  = document.getElementById('cohortNext');
+function renderCohortGrid(urls) {
+  const wrap = document.getElementById('cohortGridWrap');
+  const grid = document.getElementById('cohortGrid');
 
-  if (!urls.length) { carousel.hidden = true; return; }
-  carousel.hidden = false;
+  if (!urls.length) { wrap.hidden = true; return; }
+  wrap.hidden = false;
 
-  track.innerHTML  = urls.map((u, i) => `<div class="cohort-carousel-slide"><img src="${u}" alt="Claude Accelerator cohort photo ${i + 1}" loading="lazy"></div>`).join('');
-  dotsEl.innerHTML = urls.map((_, i) => `<button class="cohort-carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Go to photo ${i + 1}"></button>`).join('');
-
-  let current = 0;
-  const slides = track.querySelectorAll('.cohort-carousel-slide');
-  const dots   = dotsEl.querySelectorAll('.cohort-carousel-dot');
-
-  function goTo(idx) {
-    current = (idx + slides.length) % slides.length;
-    slides[current].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    dots.forEach((d, i) => d.classList.toggle('active', i === current));
-  }
-
-  prevBtn.onclick = () => goTo(current - 1);
-  nextBtn.onclick = () => goTo(current + 1);
-  dots.forEach(d => d.addEventListener('click', () => goTo(Number(d.dataset.idx))));
-
-  // Keep dots in sync if user swipes manually
-  track.addEventListener('scroll', () => {
-    const slideWidth = track.clientWidth;
-    if (!slideWidth) return;
-    const idx = Math.round(track.scrollLeft / slideWidth);
-    if (idx !== current && idx >= 0 && idx < slides.length) {
-      current = idx;
-      dots.forEach((d, i) => d.classList.toggle('active', i === current));
-    }
-  }, { passive: true });
-
-  // Auto-rotate every 5s, pause on hover/touch
-  let timer = setInterval(() => goTo(current + 1), 5000);
-  carousel.addEventListener('mouseenter', () => { clearInterval(timer); });
-  carousel.addEventListener('mouseleave', () => { timer = setInterval(() => goTo(current + 1), 5000); });
-  carousel.addEventListener('touchstart',  () => { clearInterval(timer); }, { passive: true });
+  grid.innerHTML = urls.map((u, i) =>
+    `<div class="cohort-grid-tile"><img src="${u}" alt="Claude Accelerator cohort photo ${i + 1}" loading="lazy"></div>`
+  ).join('');
 }
 
 function renderCTAs(bandKey) {
