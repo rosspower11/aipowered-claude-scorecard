@@ -99,6 +99,7 @@ input { font-family: inherit; }
 }
 .logo:hover { opacity: 1; }
 .logo-img { height: 24px; width: auto; display: block; }
+.logo-img-claude { height: 36px; }
 
 /* LAYOUT */
 main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
@@ -145,13 +146,15 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 .welcome-headline { display: flex; flex-direction: column; gap: 18px; }
 .welcome-title {
   font-family: var(--display);
-  font-weight: 900;
+  font-weight: 600;
   font-size: clamp(34px, 7vw, 60px);
   line-height: 1.05;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   margin: 0;
 }
+.welcome-title-strong { font-weight: 900; }
+.welcome-title-muted  { color: var(--text-muted); }
 .welcome-sub-title {
   font-family: var(--display);
   font-weight: 600;
@@ -521,7 +524,7 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 <main class="screen active" id="screen-welcome">
   <div class="welcome">
     <div class="welcome-headline">
-      <h1 class="welcome-title">Find out how well you're actually using Claude.</h1>
+      <h1 class="welcome-title">Find out how <span class="welcome-title-strong">well</span> you're <span class="welcome-title-strong welcome-title-muted">actually using Claude</span>.</h1>
       <div class="welcome-sub-title">Get your free personalised score.</div>
       <div class="welcome-spoiler"><span class="welcome-spoiler-tag">Spoiler:</span> probably not as well as you think.</div>
     </div>
