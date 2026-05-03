@@ -300,11 +300,29 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
   border-bottom: 1px solid var(--border);
 }
 @media (min-width: 960px) { .results-hero { grid-template-columns: 1.1fr 0.9fr; gap: 80px; } }
-.results-hero .pill { margin-bottom: 28px; }
+.score-personal-label {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(20px, 2.4vw, 26px);
+  letter-spacing: -0.005em;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
 .score-display {
   display: flex; align-items: baseline; gap: 12px;
   font-family: var(--display);
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+}
+.score-band-line {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px;
+  margin-bottom: 24px;
+}
+.score-band-prefix {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(20px, 2.4vw, 28px);
+  letter-spacing: -0.01em;
+  color: var(--text-secondary);
 }
 .score-number {
   font-size: clamp(120px, 18vw, 200px);
@@ -317,7 +335,7 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
   color: transparent;
 }
 .score-total { font-size: clamp(32px, 5vw, 56px); font-weight: 600; color: var(--text-muted); letter-spacing: -0.02em; }
-.score-band { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 24px; }
+.score-band { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 900; letter-spacing: -0.01em; }
 .score-narrative { font-size: 18px; color: var(--text-secondary); line-height: 1.6; max-width: 540px; }
 .score-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 .score-cta {
@@ -363,11 +381,10 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 .level-card-band { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
 .level-card-bar { height: 4px; background: var(--surface); position: relative; overflow: hidden; }
 .level-card-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--text); transition: width 0.8s ease; }
-.level-card-band-beginner ~ .level-card-bar .level-card-bar-fill,
-.level-card[data-band="beginner"] .level-card-bar-fill { background: #FF8C8C; }
-.level-card[data-band="explorer"] .level-card-bar-fill { background: #FFC078; }
-.level-card[data-band="practitioner"] .level-card-bar-fill { background: #B8C5D6; }
-.level-card[data-band="operator"] .level-card-bar-fill { background: var(--green); }
+.level-card[data-band="tourist"]  .level-card-bar-fill { background: #FF8C8C; }
+.level-card[data-band="player"]   .level-card-bar-fill { background: #FFC078; }
+.level-card[data-band="operator"] .level-card-bar-fill { background: #B8C5D6; }
+.level-card[data-band="beast"]    .level-card-bar-fill { background: var(--green); }
 .level-card-copy { font-size: 15px; color: var(--text-secondary); line-height: 1.55; }
 
 /* PERSONAL NOTE FROM ROSS */
@@ -564,14 +581,10 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
       <p class="goal-sub">Pick the one that matters most right now. Your recommendation will be tuned around it.</p>
     </div>
     <div class="goal-options" id="goalOptions">
-      <button class="goal-option" data-goal="leads">Generate more leads</button>
-      <button class="goal-option" data-goal="ops">Streamline business operations</button>
-      <button class="goal-option" data-goal="authority">Become an AI authority in my field</button>
-      <button class="goal-option" data-goal="content">Build a stronger content pipeline</button>
-      <button class="goal-option" data-goal="other">Something else</button>
-    </div>
-    <div class="goal-other-wrap" id="goalOtherWrap" hidden>
-      <input type="text" id="goalOtherInput" placeholder="Tell us in a sentence" maxlength="140">
+      <button class="goal-option" data-goal="leads">Generate more leads or sales</button>
+      <button class="goal-option" data-goal="content">Create content better and faster</button>
+      <button class="goal-option" data-goal="ops">Streamline internal or business operations</button>
+      <button class="goal-option" data-goal="admin">Manage more admin for me</button>
     </div>
     <button class="btn btn-primary goal-submit" id="goalSubmit" disabled>See my Claude score <span class="btn-arrow">→</span></button>
   </div>
@@ -590,12 +603,15 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 <main class="screen" id="screen-results">
   <section class="results-hero">
     <div>
-      <div class="pill"><span class="pill-dot"></span>Your Claude Score</div>
+      <div class="score-personal-label" id="scorePersonalLabel">You've scored</div>
       <div class="score-display">
         <span class="score-number" id="scoreNumber">0</span>
         <span class="score-total">/100</span>
       </div>
-      <div class="score-band" id="scoreBand">CASUAL USER</div>
+      <div class="score-band-line">
+        <span class="score-band-prefix">You're</span>
+        <span class="score-band" id="scoreBand">a Tourist</span>
+      </div>
       <p class="score-narrative" id="scoreNarrative"></p>
       <div class="score-ctas">
         <button type="button" class="score-cta score-cta-secondary" data-scroll-to="personalNote">Learn more about your score</button>
@@ -689,7 +705,7 @@ const QUESTIONS = [
     { label: "Create my own Skills", score: 5 },
     { label: "Have multiple Skills connected as plugins", score: 8 },
   ]},
-  { level: 'customise', text: "When Claude writes for me...", options: [
+  { level: 'customise', text: "When Claude writes for me, I think...", options: [
     { label: "This sounds SO AI", score: 1 },
     { label: "This sounds a bit AI, human-ish, but not me", score: 3 },
     { label: "This sounds like me but needs some fixes", score: 5 },
@@ -699,7 +715,7 @@ const QUESTIONS = [
   { level: 'create', text: "The last thing I 'built' with Claude was...", options: [
     { label: "A document or a deck", score: 1 },
     { label: "A no-code automation", score: 3 },
-    { label: "A script or a basic web page", score: 5 },
+    { label: "A landing page", score: 5 },
     { label: "An app or dashboard, deployed live", score: 8 },
   ]},
   { level: 'create', text: "When I make a polished doc, deck, or post, it...", options: [
@@ -715,16 +731,16 @@ const QUESTIONS = [
     { label: "I have several connectors running", score: 5 },
     { label: "Claude is the hub. Everything flows through it", score: 8 },
   ]},
-  { level: 'connect', text: "When stuff happens in my other tools (an email, a meeting, a new file)...", options: [
-    { label: "I tell Claude manually if I want it involved", score: 1 },
-    { label: "I sometimes ask Claude to react", score: 3 },
-    { label: "A few workflows pull events into Claude", score: 5 },
-    { label: "Triggers are wired. Claude reacts automatically", score: 8 },
+  { level: 'connect', text: "When something happens in another tool, Claude...", options: [
+    { label: "Has no idea", score: 1 },
+    { label: "Only knows if I tell it", score: 3 },
+    { label: "Picks it up for some setups", score: 5 },
+    { label: "Reacts automatically every time", score: 8 },
   ]},
   // CODE
   { level: 'code', text: "When I want to build a landing page or app...", options: [
-    { label: "Landing page? I've never even clicked on Claude Code", score: 1 },
-    { label: "I've built things in Claude but never put one live", score: 3 },
+    { label: "Never done this in Claude", score: 1 },
+    { label: "Seen one built before but had no idea what to do with it", score: 3 },
     { label: "I've built full tools. Someone else helped me put them live", score: 5 },
     { label: "I've shipped something live myself with GitHub and Vercel", score: 8 },
   ]},
@@ -754,59 +770,59 @@ const QUESTIONS = [
    ========================================================================= */
 const LEVEL_COPY = {
   chat: {
-    beginner:     "You're typing like it's Google. Claude can do far more than answer your questions, but only if you direct it. Level 1 is about turning every conversation into work that ships.",
-    explorer:     "You've started writing better prompts. The next jump is structure. Role, context, output. That's what turns Claude from a search engine into a thinking partner.",
-    practitioner: "Your prompting is solid. The leverage now sits in Projects and Memory. Build the environment around how you actually work, and Claude stops needing to be re-explained.",
-    operator:     "You direct Claude. Every conversation moves work forward. The next levels are about turning that skill into a system."
+    tourist:  "You're typing like it's Google. Claude can do far more than answer your questions, but only if you direct it. Level 1 is about turning every conversation into work that ships.",
+    player:   "You've started writing better prompts. The next jump is structure. Role, context, output. That's what turns Claude from a search engine into a thinking partner.",
+    operator: "Your prompting is solid. The leverage now sits in Projects and Memory. Build the environment around how you actually work, and Claude stops needing to be re-explained.",
+    beast:    "You direct Claude. Templates, Projects, Memory all dialled in. Every conversation moves work forward."
   },
   customise: {
-    beginner:     "Skills make Claude work to your standard, every time, without being told twice. Without them, you're rebuilding your taste from scratch every conversation.",
-    explorer:     "You've used stock Skills. The compound starts when you build your own. Voice, expertise, and process encoded once and used forever.",
-    practitioner: "You're customising Skills. The next move is your voice and standards encoded so cleanly that Claude sounds like you on your best day.",
-    operator:     "Your Skill library is your unfair advantage. Claude works to your standard every time. Now wire it into the rest of your work."
+    tourist:  "Skills make Claude work to your standard, every time, without being told twice. Without them, you're rebuilding your taste from scratch every conversation.",
+    player:   "You've used built-in Skills. The compound starts when you build your own. Voice, expertise, and process encoded once and used forever.",
+    operator: "You're customising Skills. The next move is your voice and standards encoded so cleanly that Claude sounds like you on your best day.",
+    beast:    "Your Skill library is your unfair advantage. Multiple Skills connected as plugins. Claude works to your standard every time."
   },
   create: {
-    beginner:     "You're still building artifacts manually. A deck that takes a weekend should take an afternoon. That's what this level fixes.",
-    explorer:     "Claude drafts text but you finish in another tool. The leverage sits in producing the artifact directly. Branded, structured, ready to ship.",
-    practitioner: "You're shipping fast. The Operator move is reusable templates and Skills that generate branded artifacts on demand. No more starting from blank.",
-    operator:     "You ship in minutes what used to take a weekend. Now connect the artifacts you create to the tools you ship them in."
+    tourist:  "You're still building artifacts manually. A deck that takes a weekend should take an afternoon. That's what this level fixes.",
+    player:   "Claude drafts text but you finish in another tool. The leverage sits in producing the artifact directly. Branded, structured, ready to ship.",
+    operator: "You're shipping fast. The next move is reusable Skills that produce branded artifacts on demand. No more starting from blank.",
+    beast:    "You ship in minutes what used to take a weekend. Every output produced by a Skill, never from scratch."
   },
   connect: {
-    beginner:     "Claude is on its own island. Every other tool is too. You're paying the cost of context-switching every time you work.",
-    explorer:     "A few connectors are running. Now wire the rest. Email, calendar, drive, notes. Context flows in, actions flow out.",
-    practitioner: "Claude reads across your stack. The next move is automatic triggers. Things happen in your tools, Claude reacts without you asking.",
-    operator:     "Claude is the hub of your workflow. Every tool feeds it, every action runs through it. Zero time lost to context-switching."
+    tourist:  "Claude is on its own island. Every other tool is too. You're paying the cost of context-switching every time you work.",
+    player:   "A few connectors are running. Now wire the rest. Email, calendar, drive, notes. Context flows in, actions flow out.",
+    operator: "Claude reads across your stack. The next move is automatic triggers. Things happen in your tools, Claude reacts without you asking.",
+    beast:    "Claude is the hub of your workflow. Triggers wired. Every tool feeds it, every action runs through it."
   },
   code: {
-    beginner:     "You have ideas that never get built because you're not a developer. Claude Code is how that changes. Apps, dashboards, internal tools, shipped in hours.",
-    explorer:     "No-code is the training wheels. The unlock is Claude Code. Real software, real URLs, no engineering team needed.",
-    practitioner: "You're shipping working code. The Operator move is the full deployment loop. Idea to live URL in a single afternoon.",
-    operator:     "You've collapsed the gap between idea and shipped product. The next level wires this into a system that runs without you."
+    tourist:  "You have ideas that never get built because you're not a developer. Claude Code is how that changes. Apps, dashboards, internal tools, shipped in hours.",
+    player:   "No-code is the training wheels. The unlock is Claude Code. Real software, real URLs, no engineering team needed.",
+    operator: "You're shipping working code. The next move is the full deployment loop. Idea to live URL in a single afternoon.",
+    beast:    "You've collapsed the gap between idea and shipped product. Full agentic mode with code editors and live agents."
   },
   command: {
-    beginner:     "Everything you do, you do manually. Recurring work eats your week. Level 6 is when work starts running while you sleep.",
-    explorer:     "A few automations exist. The full move is a stack of agents on schedules and triggers, with a second brain holding it all together.",
-    practitioner: "You have agents running. Now organise the system. Data, plugins, Skills, all in one coherent OS that compounds week after week.",
-    operator:     "You direct a personal operating system. Work happens while you sleep. This is the ceiling of ClaudeOS."
+    tourist:  "Everything you do, you do manually. Recurring work eats your week. Level 6 is when work starts running while you sleep.",
+    player:   "A few automations exist. The full move is a stack of agents on schedules and triggers, with a system holding it all together.",
+    operator: "You have agents running. Now organise the system. Skills, plugins, agents all in one coherent setup that compounds week after week.",
+    beast:    "Claude works for you now. Agents on schedules, Skills firing, plugins talking. Work ships while you sleep."
   }
 };
 
 const OVERALL_COPY = {
-  casual: {
-    band: "Casual user",
-    narrative: "You're at the start. Most people are. The good news is the path is mapped, and the gap from where you are to where Operators sit is six weeks of focused work, not years."
+  tourist: {
+    band: "Tourist",
+    narrative: "You're a Tourist. Claude is a chat box you open occasionally. The good news: the 6 levels are all unlocked from here. The Accelerator is the path to your first real system."
   },
-  active: {
-    band: "Active user",
-    narrative: "You're getting value from Claude. You're also missing 80% of what's possible. The Accelerator closes that gap level by level, in the right order."
-  },
-  power: {
-    band: "Power user",
-    narrative: "You've built something. You're ahead of 99% of users. The Accelerator is where you go from power user to Operator. A full personal OS that runs itself."
+  player: {
+    band: "Player",
+    narrative: "You're a Player. You're in the game and getting real value, but you're missing 80% of what's possible. The Accelerator closes the gap level by level, in the right order."
   },
   operator: {
-    band: "ClaudeOS Operator",
-    narrative: "You're already operating at the top of the stack. The Accelerator is for compounding what you've built and connecting with other Operators who think this way."
+    band: "Operator",
+    narrative: "You're an Operator. You've built a system that works. There are gaps. The Accelerator is where you go from competent to elite."
+  },
+  beast: {
+    band: "Beast",
+    narrative: "You're a Beast. You've already done what 99% of users haven't. The Accelerator is where Beasts compound together and turn skill into income."
   }
 };
 
@@ -819,103 +835,102 @@ const OVERALL_COPY = {
 const LEVEL_CAPABILITIES = {
   chat: {
     achieved: {
-      beginner:     "asking Claude the odd question",
-      explorer:     "writing real prompts with a bit of context",
-      practitioner: "structured prompts and a Project or two",
-      operator:     "prompts, Projects, and Memory dialled in around how you work"
+      tourist:  "asking Claude the odd question",
+      player:   "writing real prompts with a bit of context",
+      operator: "structured prompts and a Project or two",
+      beast:    "prompts, Projects, and Memory dialled in around how you work"
     },
     gap: {
-      beginner:     "structure your prompts so Claude actually delivers",
-      explorer:     "set up Projects and Memory around how you work",
-      practitioner: "encode your real workflow so Claude stops needing to be re-explained",
-      operator:     null
+      tourist:  "structure your prompts so Claude actually delivers",
+      player:   "set up Projects and Memory around how you work",
+      operator: "encode your real workflow so Claude stops needing to be re-explained",
+      beast:    null
     }
   },
   customise: {
     achieved: {
-      beginner:     "running Claude out of the box",
-      explorer:     "playing with a few stock Skills",
-      practitioner: "tweaking Skills to fit your workflow",
-      operator:     "your own custom Skills doing the heavy lifting"
+      tourist:  "running Claude out of the box",
+      player:   "playing with a few built-in Skills",
+      operator: "tweaking Skills to fit your workflow",
+      beast:    "your own custom Skills doing the heavy lifting"
     },
     gap: {
-      beginner:     "use Skills so Claude works to your standard every time",
-      explorer:     "build your own Skills around your voice and process",
-      practitioner: "encode your standards so Claude sounds like you on your best day",
-      operator:     null
+      tourist:  "use Skills so Claude works to your standard every time",
+      player:   "build your own Skills around your voice and process",
+      operator: "encode your standards so Claude sounds like you on your best day",
+      beast:    null
     }
   },
   create: {
     achieved: {
-      beginner:     "building docs and decks the manual way",
-      explorer:     "drafting in Claude, finishing in another tool",
-      practitioner: "shipping polished artifacts in under an hour",
-      operator:     "branded, ready-to-ship artifacts on demand"
+      tourist:  "building docs and decks the manual way",
+      player:   "drafting in Claude, finishing in another tool",
+      operator: "shipping polished artifacts in under an hour",
+      beast:    "branded, ready-to-ship artifacts on demand"
     },
     gap: {
-      beginner:     "get Claude to produce the artifact, not just the words",
-      explorer:     "produce branded, structured artifacts straight out of Claude",
-      practitioner: "build reusable Skills that generate ready-to-ship work",
-      operator:     null
+      tourist:  "get Claude to produce the artifact, not just the words",
+      player:   "produce branded, structured artifacts straight out of Claude",
+      operator: "build reusable Skills that generate ready-to-ship work",
+      beast:    null
     }
   },
   connect: {
     achieved: {
-      beginner:     "running Claude as a standalone tool",
-      explorer:     "wiring up your first one or two integrations",
-      practitioner: "Claude reading across your Gmail, Drive, and Notion stack",
-      operator:     "Claude as the hub, with triggers firing automatically"
+      tourist:  "running Claude as a standalone tool",
+      player:   "wiring up your first one or two integrations",
+      operator: "Claude reading across your Gmail, Drive, and Notion stack",
+      beast:    "Claude as the hub, with triggers firing automatically"
     },
     gap: {
-      beginner:     "connect Claude to your email, calendar, and drive so context flows in",
-      explorer:     "wire the rest of your stack into Claude",
-      practitioner: "set triggers so Claude reacts the moment things happen elsewhere",
-      operator:     null
+      tourist:  "connect Claude to your email, calendar, and drive so context flows in",
+      player:   "wire the rest of your stack into Claude",
+      operator: "set triggers so Claude reacts the moment things happen elsewhere",
+      beast:    null
     }
   },
   code: {
     achieved: {
-      beginner:     "writing ideas down without being able to ship them",
-      explorer:     "building rough versions in no-code tools",
-      practitioner: "shipping working scripts and basic web pages",
-      operator:     "shipping full apps and dashboards live with Claude Code"
+      tourist:  "writing ideas down without being able to ship them",
+      player:   "building rough versions in no-code tools",
+      operator: "shipping landing pages and basic tools",
+      beast:    "shipping full apps and dashboards live with Claude Code"
     },
     gap: {
-      beginner:     "ship your first working tool with Claude Code, no engineer needed",
-      explorer:     "graduate from no-code to real software with Claude Code",
-      practitioner: "close the loop from idea to live URL in a single afternoon",
-      operator:     null
+      tourist:  "ship your first working tool with Claude Code, no engineer needed",
+      player:   "graduate from no-code to real software with Claude Code",
+      operator: "close the loop from idea to live URL in a single afternoon",
+      beast:    null
     }
   },
   command: {
     achieved: {
-      beginner:     "doing recurring work by hand",
-      explorer:     "a few small automations running in the background",
-      practitioner: "scheduled Claude tasks running on a cadence",
-      operator:     "a stack of agents handling recurring work while you sleep"
+      tourist:  "doing recurring work by hand",
+      player:   "a few small automations running in the background",
+      operator: "scheduled Claude tasks running on a cadence",
+      beast:    "a stack of agents handling recurring work while you sleep"
     },
     gap: {
-      beginner:     "get your first recurring workflow running without you in the loop",
-      explorer:     "run a stack of scheduled tasks and triggers, not just one-offs",
-      practitioner: "wire data, Skills, and agents into one personal OS that compounds",
-      operator:     null
+      tourist:  "get your first recurring workflow running without you in the loop",
+      player:   "run a stack of scheduled tasks and triggers, not just one-offs",
+      operator: "wire Skills, plugins, and agents into one coherent system that compounds",
+      beast:    null
     }
   }
 };
 
 const WHERE_YOU_ARE_NOW = {
-  casual:   "doing the work the hard way",
-  active:   "getting some leverage from Claude, but leaving most on the table",
-  power:    "running serious AI workflows already",
-  operator: "operating at the top of the stack"
+  tourist:  "treating Claude like Google",
+  player:   "in the game but missing most of what's possible",
+  operator: "running real systems with Claude",
+  beast:    "operating at the top of the stack"
 };
 
 const GOAL_COPY = {
-  leads:     { label: "generate more leads",                  destination: "having Claude generate qualified leads for you on autopilot" },
-  ops:       { label: "streamline business operations",       destination: "running your operations with Claude doing the busywork" },
-  authority: { label: "become an AI authority in your field", destination: "becoming the recognised AI authority in your field" },
-  content:   { label: "build a stronger content pipeline",    destination: "shipping a content engine that runs whether you're at your desk or not" },
-  other:     { label: "your own thing",                       destination: "where you want to take this" }
+  leads:   { label: "generate more leads or sales",            destination: "having Claude generate qualified leads on autopilot" },
+  content: { label: "create content better and faster",        destination: "shipping a content engine that runs whether you're at your desk or not" },
+  ops:     { label: "streamline internal or business operations", destination: "running your operations with Claude doing the busywork" },
+  admin:   { label: "manage more admin",                       destination: "having Claude run your inbox, calendar, and the admin that eats your week" }
 };
 
 /* =========================================================================
@@ -927,8 +942,7 @@ const state = {
   email: '',
   answers: {},      // { questionIndex: scoreValue }
   currentQ: 0,
-  goal: '',         // one of GOAL_OPTIONS keys, or 'other'
-  goalOther: '',    // free text when goal === 'other'
+  goal: '',         // one of GOAL_COPY keys
 };
 
 /* =========================================================================
@@ -945,17 +959,17 @@ function isValidEmail(e) {
 }
 
 function levelBand(score /* 0-100 */) {
-  if (score <= 25) return { id: 'beginner',     label: 'Beginner' };
-  if (score <= 50) return { id: 'explorer',     label: 'Explorer' };
-  if (score <= 75) return { id: 'practitioner', label: 'Practitioner' };
-  return                  { id: 'operator',     label: 'Operator' };
+  if (score <= 30) return { id: 'tourist',  label: 'Tourist' };
+  if (score <= 60) return { id: 'player',   label: 'Player' };
+  if (score <= 89) return { id: 'operator', label: 'Operator' };
+  return                  { id: 'beast',    label: 'Beast' };
 }
 
 function overallBand(score /* 0-100 */) {
-  if (score <= 30) return 'casual';
-  if (score <= 55) return 'active';
-  if (score <= 75) return 'power';
-  return 'operator';
+  if (score <= 30) return 'tourist';
+  if (score <= 60) return 'player';
+  if (score <= 89) return 'operator';
+  return 'beast';
 }
 
 /* =========================================================================
@@ -992,7 +1006,6 @@ document.getElementById('welcomeForm').addEventListener('submit', (e) => {
   state.currentQ  = 0;
   state.answers   = {};
   state.goal      = '';
-  state.goalOther = '';
   renderQuestion();
   show('screen-quiz');
 });
@@ -1061,42 +1074,22 @@ function showGoalScreen() {
   document.getElementById('quizBar').style.width = '100%';
   // reset selections so going back-then-forward starts clean
   document.querySelectorAll('#goalOptions .goal-option').forEach(b => b.classList.remove('selected'));
-  document.getElementById('goalOtherWrap').hidden = true;
-  document.getElementById('goalOtherInput').value = '';
   document.getElementById('goalSubmit').disabled = true;
   state.goal = '';
-  state.goalOther = '';
   show('screen-goal');
 }
 
 (function wireGoalScreen() {
-  const opts        = document.querySelectorAll('#goalOptions .goal-option');
-  const otherWrap   = document.getElementById('goalOtherWrap');
-  const otherInput  = document.getElementById('goalOtherInput');
-  const submitBtn   = document.getElementById('goalSubmit');
-
-  function refreshSubmit() {
-    if (!state.goal) { submitBtn.disabled = true; return; }
-    if (state.goal === 'other' && !otherInput.value.trim()) { submitBtn.disabled = true; return; }
-    submitBtn.disabled = false;
-  }
+  const opts      = document.querySelectorAll('#goalOptions .goal-option');
+  const submitBtn = document.getElementById('goalSubmit');
 
   opts.forEach(btn => {
     btn.addEventListener('click', () => {
       opts.forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       state.goal = btn.dataset.goal;
-      otherWrap.hidden = state.goal !== 'other';
-      if (state.goal === 'other') {
-        setTimeout(() => otherInput.focus(), 50);
-      }
-      refreshSubmit();
+      submitBtn.disabled = false;
     });
-  });
-
-  otherInput.addEventListener('input', () => {
-    state.goalOther = otherInput.value.trim();
-    refreshSubmit();
   });
 
   submitBtn.addEventListener('click', () => {
@@ -1159,8 +1152,8 @@ async function submitToWebhooks(scores) {
   try { note = buildRecommendation(scores.perLevel, bandKey); }
   catch (err) { console.error('Recommendation build failed for webhook:', err); note = { paragraphs: [], closer: '', strengths: [], gaps: [], goalDestination: '' }; }
 
-  const goalEntry = GOAL_COPY[state.goal] || GOAL_COPY.other;
-  const goalLabel = (state.goal === 'other' && state.goalOther) ? state.goalOther : goalEntry.label;
+  const goalEntry = GOAL_COPY[state.goal] || GOAL_COPY.leads;
+  const goalLabel = goalEntry.label;
 
   const payload = {
     // ----- GHL-expected field names (match the keys configured in the GHL workflow) -----
@@ -1188,7 +1181,6 @@ async function submitToWebhooks(scores) {
     overall_band_label:   OVERALL_COPY[bandKey].band,
     goal:                 state.goal,
     goal_label:           goalLabel,
-    goal_other_text:      state.goal === 'other' ? state.goalOther : '',
     goal_destination:     note.goalDestination,
     strength_levels:      note.strengths.map(s => s.id),
     gap_levels:           note.gaps.map(g => g.id),
@@ -1220,7 +1212,12 @@ function renderResults({ perLevel, overall }) {
   document.getElementById('scoreNumber').textContent = overall;
   const bandKey = overallBand(overall);
   const overallCopy = OVERALL_COPY[bandKey];
-  document.getElementById('scoreBand').textContent = overallCopy.band.toUpperCase();
+  const article = /^[aeiou]/i.test(overallCopy.band) ? 'an' : 'a';
+  const personalLabel = state.firstName
+    ? `${state.firstName}, you've scored`
+    : "You've scored";
+  document.getElementById('scorePersonalLabel').textContent = personalLabel;
+  document.getElementById('scoreBand').textContent = `${article} ${overallCopy.band}`;
   document.getElementById('scoreNarrative').textContent = overallCopy.narrative;
   document.getElementById('footerEmail').textContent = state.email;
 
@@ -1288,14 +1285,13 @@ function buildRecommendation(perLevel, bandKey) {
   const strengthPhrases = strengths.map(s => LEVEL_CAPABILITIES[s.id].achieved[s.band]).filter(Boolean);
   const gapPhrases      = gaps.map(g => LEVEL_CAPABILITIES[g.id].gap[g.band]).filter(Boolean);
 
-  const bandLabel       = OVERALL_COPY[bandKey].band; // e.g. "Casual user"
+  const bandLabel       = OVERALL_COPY[bandKey].band; // e.g. "Tourist"
+  const bandArticle     = /^[aeiou]/i.test(bandLabel) ? 'an' : 'a';
   const whereYouAreNow  = WHERE_YOU_ARE_NOW[bandKey];
 
-  const goalKey         = state.goal || 'other';
-  const goalEntry       = GOAL_COPY[goalKey] || GOAL_COPY.other;
-  const goalDestination = (goalKey === 'other' && state.goalOther)
-    ? state.goalOther
-    : goalEntry.destination;
+  const goalKey         = state.goal || 'leads';
+  const goalEntry       = GOAL_COPY[goalKey] || GOAL_COPY.leads;
+  const goalDestination = goalEntry.destination;
 
   const sentences = [];
   sentences.push(`Hey ${state.firstName || 'there'},`);
@@ -1303,7 +1299,7 @@ function buildRecommendation(perLevel, bandKey) {
 
   if (strengthPhrases.length && gapPhrases.length) {
     sentences.push(
-      `You're a ${bandLabel}, which means you're ${whereYouAreNow}. You've likely had a go with ${joinPair(strengthPhrases[0], strengthPhrases[1])}, but you haven't yet managed to ${joinPair(gapPhrases[0], gapPhrases[1])}.`
+      `You're ${bandArticle} ${bandLabel}, which means you're ${whereYouAreNow}. You've likely had a go with ${joinPair(strengthPhrases[0], strengthPhrases[1])}, but you haven't yet managed to ${joinPair(gapPhrases[0], gapPhrases[1])}.`
     );
     sentences.push(`With a few new ideas, we can help you ${joinPair(gapPhrases[0], gapPhrases[1])}, and start moving you toward ${goalDestination}.`);
   } else if (strengthPhrases.length) {
@@ -1403,20 +1399,18 @@ function renderCTAs(bandKey) {
   `;
 
   // Adapt headline + ordering by band
-  if (bandKey === 'casual' || bandKey === 'active') {
+  if (bandKey === 'tourist' || bandKey === 'player') {
     headline.textContent = 'Start moving up the levels.';
-    sub.textContent = 'Where you are now is where most professionals are. The Accelerator is the fastest path to ClaudeOS Operator.';
+    sub.textContent = "Where you are now is where most professionals are. The Accelerator is the fastest path to Operator.";
     grid.innerHTML = callCard + joinCard;
-  } else if (bandKey === 'power') {
-    headline.textContent = 'Close the gap to ClaudeOS Operator.';
+  } else if (bandKey === 'operator') {
+    headline.textContent = "Close the gap from Operator to Beast.";
     sub.textContent = "You've built something real. The Accelerator compounds what you have and fills the gaps in 6 weeks.";
     grid.innerHTML = callCard + joinCard;
   } else {
-    headline.textContent = "You're operating. Now compound it.";
-    sub.textContent = "The Accelerator is where Operators meet other Operators. Sharper systems, sharper community, faster compounding.";
-    // Operator: join card first
+    headline.textContent = "You're a Beast. Now compound it.";
+    sub.textContent = "The Accelerator is where Beasts compound together. Sharper systems, sharper community, faster compounding.";
     grid.innerHTML = joinCard + callCard;
-    // Make join card 'primary' visually was already set; nothing else needed
   }
 }
 
