@@ -161,7 +161,7 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
   font-size: clamp(18px, 2.6vw, 24px);
   line-height: 1.3;
   letter-spacing: -0.01em;
-  color: var(--accent);
+  color: var(--text);
 }
 .welcome-spoiler {
   font-style: italic;
@@ -407,7 +407,7 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
   border-bottom: 1px solid var(--border);
 }
 .personal-note-photo {
-  width: 64px; height: 64px;
+  width: 96px; height: 96px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--border-strong);
@@ -458,31 +458,69 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 .personal-note-cta .btn-arrow { transition: transform 0.2s ease; }
 .personal-note-cta:hover .btn-arrow { transform: translateY(2px); }
 
-/* COHORT GRID */
-.cohort-grid-wrap { display: flex; flex-direction: column; gap: 14px; }
-.cohort-grid-kicker { color: var(--text-muted); }
-.cohort-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+/* COHORT SHOWCASE — full-image carousel, sits outside the from-Ross box */
+.cohort-showcase {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 0 40px;
+  display: flex; flex-direction: column;
+  gap: 18px;
 }
-@media (min-width: 640px) {
-  .cohort-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-}
-.cohort-grid-tile {
-  aspect-ratio: 1 / 1;
+.cohort-showcase-kicker { color: var(--text-muted); }
+.cohort-showcase-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   background: #000;
   border: 1px solid var(--border);
-  overflow: hidden;
-}
-.cohort-grid-tile img {
+  height: clamp(320px, 60vw, 620px);
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
 }
-.cohort-grid-tile:hover img { transform: scale(1.04); }
+.cohort-showcase-track::-webkit-scrollbar { display: none; }
+.cohort-showcase-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: flex; align-items: center; justify-content: center;
+  background: #000;
+}
+.cohort-showcase-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.cohort-showcase-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.cohort-showcase-arrow {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.cohort-showcase-arrow:hover { border-color: var(--text); background: var(--surface-hover); }
+.cohort-showcase-dots {
+  display: flex; gap: 8px;
+  flex: 1; justify-content: center;
+}
+.cohort-showcase-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.cohort-showcase-dot.active { background: var(--text); transform: scale(1.2); }
 
 /* CTA SECTION */
 .cta-section { padding: 80px 0; }
@@ -541,14 +579,14 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 <main class="screen active" id="screen-welcome">
   <div class="welcome">
     <div class="welcome-headline">
-      <h1 class="welcome-title">Find out how <span class="welcome-title-strong">well</span> you're <span class="welcome-title-strong welcome-title-muted">actually using Claude</span>.</h1>
+      <h1 class="welcome-title">Find out how well you're <span class="welcome-title-strong welcome-title-muted">actually using Claude</span>.</h1>
       <div class="welcome-sub-title">Get your free personalised score.</div>
       <div class="welcome-spoiler"><span class="welcome-spoiler-tag">Spoiler:</span> probably not as well as you think.</div>
     </div>
     <form class="welcome-form" id="welcomeForm">
       <div class="welcome-form-row">
-        <input type="text" id="firstNameInput" placeholder="First name" autocomplete="given-name" required>
-        <input type="text" id="lastNameInput" placeholder="Last name" autocomplete="family-name" required>
+        <input type="text" id="firstNameInput" placeholder="First name" autocomplete="given-name" autocapitalize="words" spellcheck="false" required>
+        <input type="text" id="lastNameInput" placeholder="Last name" autocomplete="family-name" autocapitalize="words" spellcheck="false" required>
       </div>
       <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email" required>
       <button type="submit" class="btn btn-primary">Start now <span class="btn-arrow">→</span></button>
@@ -643,16 +681,21 @@ main { padding: 120px 32px 80px; max-width: var(--max-width); margin: 0 auto; }
 
       <div class="personal-note-body" id="personalNoteBody"></div>
 
-      <div class="cohort-grid-wrap" id="cohortGridWrap" hidden>
-        <div class="cohort-grid-kicker kicker">Real cohorts, real builders</div>
-        <div class="cohort-grid" id="cohortGrid"></div>
-      </div>
-
       <p class="personal-note-closer" id="personalNoteCloser"></p>
 
       <button type="button" class="personal-note-cta" id="personalNoteCta">
         Join the next cohort <span class="btn-arrow">↓</span>
       </button>
+    </div>
+  </section>
+
+  <section class="cohort-showcase" id="cohortShowcase" hidden>
+    <div class="cohort-showcase-kicker kicker">Real cohorts, real builders</div>
+    <div class="cohort-showcase-track" id="cohortShowcaseTrack"></div>
+    <div class="cohort-showcase-controls">
+      <button class="cohort-showcase-arrow" id="cohortShowcasePrev" type="button" aria-label="Previous photo">←</button>
+      <div class="cohort-showcase-dots" id="cohortShowcaseDots"></div>
+      <button class="cohort-showcase-arrow" id="cohortShowcaseNext" type="button" aria-label="Next photo">→</button>
     </div>
   </section>
 
@@ -985,10 +1028,15 @@ document.addEventListener('click', (e) => {
 /* =========================================================================
    WELCOME SCREEN
    ========================================================================= */
+function capitaliseName(s) {
+  // "ross power" -> "Ross Power", "o'brien" -> "O'Brien", "jean-luc" -> "Jean-Luc"
+  return s.toLowerCase().replace(/(^|[\s'-])(\p{L})/gu, (_, sep, ch) => sep + ch.toUpperCase());
+}
+
 document.getElementById('welcomeForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const firstName = document.getElementById('firstNameInput').value.trim();
-  const lastName  = document.getElementById('lastNameInput').value.trim();
+  const firstName = capitaliseName(document.getElementById('firstNameInput').value.trim());
+  const lastName  = capitaliseName(document.getElementById('lastNameInput').value.trim());
   const email     = document.getElementById('emailInput').value.trim();
   const errEl     = document.getElementById('welcomeError');
   if (!firstName || !lastName) {
@@ -1339,8 +1387,8 @@ function renderPersonalNote(perLevel, bandKey) {
     rossImg.style.display = 'none';
   }
 
-  // Cohort grid — parse comma-separated URL list, hide section if none
-  renderCohortGrid((body.dataset.cohortPhotos || '').split(',').map(s => s.trim()).filter(Boolean));
+  // Cohort showcase carousel — parse comma-separated URL list, hide section if none
+  renderCohortShowcase((body.dataset.cohortPhotos || '').split(',').map(s => s.trim()).filter(Boolean));
 
   // CTA → smooth-scroll to the Join card
   const cta = document.getElementById('personalNoteCta');
@@ -1361,16 +1409,50 @@ function renderPersonalNote(perLevel, bandKey) {
   };
 }
 
-function renderCohortGrid(urls) {
-  const wrap = document.getElementById('cohortGridWrap');
-  const grid = document.getElementById('cohortGrid');
+function renderCohortShowcase(urls) {
+  const wrap    = document.getElementById('cohortShowcase');
+  const track   = document.getElementById('cohortShowcaseTrack');
+  const dotsEl  = document.getElementById('cohortShowcaseDots');
+  const prevBtn = document.getElementById('cohortShowcasePrev');
+  const nextBtn = document.getElementById('cohortShowcaseNext');
 
   if (!urls.length) { wrap.hidden = true; return; }
   wrap.hidden = false;
 
-  grid.innerHTML = urls.map((u, i) =>
-    `<div class="cohort-grid-tile"><img src="${u}" alt="Claude Accelerator cohort photo ${i + 1}" loading="lazy"></div>`
-  ).join('');
+  track.innerHTML  = urls.map((u, i) => `<div class="cohort-showcase-slide"><img src="${u}" alt="Claude Accelerator cohort photo ${i + 1}" loading="lazy"></div>`).join('');
+  dotsEl.innerHTML = urls.map((_, i) => `<button class="cohort-showcase-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Go to photo ${i + 1}" type="button"></button>`).join('');
+
+  let current = 0;
+  const slides = track.querySelectorAll('.cohort-showcase-slide');
+  const dots   = dotsEl.querySelectorAll('.cohort-showcase-dot');
+
+  function goTo(idx) {
+    current = (idx + slides.length) % slides.length;
+    // scroll the TRACK horizontally only — never touches page scroll
+    track.scrollTo({ left: current * track.clientWidth, behavior: 'smooth' });
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  prevBtn.onclick = () => goTo(current - 1);
+  nextBtn.onclick = () => goTo(current + 1);
+  dots.forEach(d => d.addEventListener('click', () => goTo(Number(d.dataset.idx))));
+
+  // Keep dots in sync if user swipes manually
+  track.addEventListener('scroll', () => {
+    const slideWidth = track.clientWidth;
+    if (!slideWidth) return;
+    const idx = Math.round(track.scrollLeft / slideWidth);
+    if (idx !== current && idx >= 0 && idx < slides.length) {
+      current = idx;
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+  }, { passive: true });
+
+  // Auto-rotate every 5s, pause on hover/touch
+  let timer = setInterval(() => goTo(current + 1), 5000);
+  wrap.addEventListener('mouseenter', () => { clearInterval(timer); });
+  wrap.addEventListener('mouseleave', () => { timer = setInterval(() => goTo(current + 1), 5000); });
+  wrap.addEventListener('touchstart',  () => { clearInterval(timer); }, { passive: true });
 }
 
 function renderCTAs(bandKey) {
